@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,4 +31,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "ordered_by", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "added_by", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Product> products = new ArrayList<>();
 }

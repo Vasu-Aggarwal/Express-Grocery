@@ -22,4 +22,7 @@ public class Order {
     private Integer order_price;
     private Integer order_status;
 
+    @ManyToOne
+    @JoinColumn(name = "ordered_by")
+    private User ordered_by;
 }
