@@ -21,11 +21,15 @@ public class Product {
 
     private Double product_price;
 
-    private Integer product_stock;
+    private Integer in_stock_quantity;
 
     private String product_name;
 
     private Boolean is_available;
+
+    private String about_product;
+
+    private String product_img;
 
     @ManyToOne
     @JoinColumn(name = "added_by")
@@ -34,5 +38,11 @@ public class Product {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "category_id"))
     private List<Category> categories = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "products", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Review> reviews = new ArrayList<>();
 
 }

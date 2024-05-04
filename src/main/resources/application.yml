@@ -17,7 +17,7 @@ spring:
       ddl-auto: update
 
   datasource:
-    url: jdbc:mysql://localhost:3306/expressStore
+    url: jdbc:mysql://localhost:3306/express_store
     username: root
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -26,8 +26,8 @@ spring:
     init:
       mode: always
 
-#logging:
-#  level:
-#    org:
-#      springframework:
-#        security: DEBUG
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

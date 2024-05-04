@@ -1,8 +1,6 @@
 package com.express.grocery.Express.Grocery.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +15,7 @@ import java.sql.Timestamp;
 public class InvoiceParticular {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer ip_id;
 
     private Double basic_amount;
@@ -26,5 +25,9 @@ public class InvoiceParticular {
     private Double total_amount;
     private Timestamp invoice_date;
     private Integer invoice_status;
+
+    @OneToOne
+    @JoinColumn(name = "invoice_id")
+    private Invoice invoice;
 
 }

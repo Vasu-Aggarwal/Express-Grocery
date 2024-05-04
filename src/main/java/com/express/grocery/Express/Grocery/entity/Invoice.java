@@ -1,11 +1,11 @@
 package com.express.grocery.Express.Grocery.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class Invoice {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer invoice_id;
     private Integer invoice_status;
     private String invoice_number;
@@ -22,5 +23,13 @@ public class Invoice {
     private String shipping_address;
     private String billing_address;
     private Integer billing_contact;
+    private Timestamp invoice_date;
+
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private Order order_id;
+
+    @OneToOne(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private InvoiceParticular inp;
 
 }

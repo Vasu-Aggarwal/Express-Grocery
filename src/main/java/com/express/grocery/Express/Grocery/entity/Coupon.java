@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +17,7 @@ import java.sql.Timestamp;
 public class Coupon {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer coupon_id;
 
     private Double max_discount;
@@ -24,5 +26,22 @@ public class Coupon {
     private Timestamp coupon_expire_date;
     private String coupon_name;
     private Double minimum_cart_value;
+    private Integer coupon_status;
+
+    //Coupon to user
+//    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany
+    @JoinTable(
+            name = "user_coupon",
+            joinColumns = @JoinColumn(name = "coupon_id", referencedColumnName = "coupon_id"),
+            inverseJoinColumns = @JoinColumn(name = "uuid", referencedColumnName = "user_uuid")
+    )
+    private List<User> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Category> categories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Order> orders = new ArrayList<>();
 
 }
