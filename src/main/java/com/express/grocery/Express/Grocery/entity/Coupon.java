@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,14 @@ public class Coupon {
     private String coupon_name;
     private Double minimum_cart_value;
     private Integer coupon_status;
+
+    @CreationTimestamp
+    @Column(name = "created_on", updatable = false)
+    private Timestamp created_on;
+
+    @LastModifiedDate
+    @Column(name = "modified_on")
+    private Timestamp modified_on;
 
     //Coupon to user
 //    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

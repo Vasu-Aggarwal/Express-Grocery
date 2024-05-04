@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,14 @@ public class Product {
     private String about_product;
 
     private String product_img;
+
+    @CreationTimestamp
+    @Column(name = "added_on", updatable = false)
+    private Timestamp added_on;
+
+    @LastModifiedDate
+    @Column(name = "modified_on")
+    private Timestamp modified_on;
 
     @ManyToOne
     @JoinColumn(name = "added_by")

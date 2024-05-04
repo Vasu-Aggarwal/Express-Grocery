@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -23,6 +24,9 @@ public class InvoiceParticular {
     private Double gst_rate;
     private Double gst_amount;
     private Double total_amount;
+
+    @CreationTimestamp
+    @Column(name = "invoice_date", updatable = false)
     private Timestamp invoice_date;
     private Integer invoice_status;
 

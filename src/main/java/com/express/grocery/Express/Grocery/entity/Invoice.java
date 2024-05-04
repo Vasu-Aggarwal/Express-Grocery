@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 
 @Data
@@ -23,6 +25,9 @@ public class Invoice {
     private String shipping_address;
     private String billing_address;
     private Integer billing_contact;
+
+    @CreationTimestamp
+    @Column(name = "invoice_date", updatable = false)
     private Timestamp invoice_date;
 
     @OneToOne

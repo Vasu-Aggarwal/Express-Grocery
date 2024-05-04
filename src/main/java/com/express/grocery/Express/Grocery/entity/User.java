@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedBy;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+    @CreationTimestamp
+    @Column(name = "created_on", updatable = false)
     private Timestamp created_on;
     private Boolean is_coupon;
 
