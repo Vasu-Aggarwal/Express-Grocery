@@ -54,12 +54,12 @@ public class Coupon {
 
     //Coupon to user
 //    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @OneToMany
-    @JoinTable(
-            name = "user_coupon",
-            joinColumns = @JoinColumn(name = "coupon_id", referencedColumnName = "coupon_id"),
-            inverseJoinColumns = @JoinColumn(name = "uuid", referencedColumnName = "user_uuid")
-    )
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    @JoinTable(
+//            name = "user_coupon",
+//            joinColumns = @JoinColumn(name = "coupon_id", referencedColumnName = "coupon_id"),
+//            inverseJoinColumns = @JoinColumn(name = "uuid", referencedColumnName = "user_uuid")
+//    )
     private List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

@@ -55,4 +55,8 @@ public class User {
     @OneToMany(mappedBy = "addedBy", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Product> products = new ArrayList<>();
 
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
+
 }

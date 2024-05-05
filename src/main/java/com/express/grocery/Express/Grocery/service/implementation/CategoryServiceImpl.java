@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
                     );
             category.setCategoryName(addUpdateCategoryRequest.getCategoryName());
             if (!addUpdateCategoryRequest.getCoupon().isEmpty()){
-                Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon());
+                Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", addUpdateCategoryRequest.getCoupon()), 0));
                 category.setCoupon(coupon);
                 category.setIsCoupon(true);
             } else {
@@ -49,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
         else{
             Category category = modelMapper.map(addUpdateCategoryRequest, Category.class);
             if (!addUpdateCategoryRequest.getCoupon().isEmpty()){
-                Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon());
+                Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", addUpdateCategoryRequest.getCoupon()), 0));;
                 category.setCoupon(coupon);
                 category.setIsCoupon(true);
             } else {
