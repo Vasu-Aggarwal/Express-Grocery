@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class Order {
 
     @CreationTimestamp
     @Column(name = "order_date")
-    private Timestamp orderDate;
+    private LocalDateTime orderDate;
     @Column(name = "order_amount")
     private Double orderAmount;
     @Column(name = "order_status")

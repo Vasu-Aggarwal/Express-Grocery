@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -33,7 +34,7 @@ public class InvoiceParticular {
 
     @CreationTimestamp
     @Column(name = "invoice_date", updatable = false)
-    private Timestamp invoiceDate;
+    private LocalDateTime invoiceDate;
     @Column(name = "invoice_status")
     private Integer invoiceStatus;
 

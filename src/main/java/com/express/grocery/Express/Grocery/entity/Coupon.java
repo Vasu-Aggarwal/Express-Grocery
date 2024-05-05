@@ -9,6 +9,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class Coupon {
     @Column(name = "coupon_type", nullable = false)
     private String couponType;
     @Column(name = "coupon_expire_date")
-    private Timestamp couponExpireDate;
+    private LocalDateTime couponExpireDate;
     @Column(name = "coupon_name", nullable = false)
     private String couponName;
     @Column(name = "minimum_cart_value")

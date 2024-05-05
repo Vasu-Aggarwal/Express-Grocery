@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +18,7 @@ public class AddUpdateCouponResponse {
     private Double maxDiscount;
     private Integer discountPercent;
     private String couponType;
-    private Timestamp couponExpireDate;
+    private LocalDateTime couponExpireDate;
     private String couponName;
     private Double minimumCartValue;
     private Integer couponStatus;

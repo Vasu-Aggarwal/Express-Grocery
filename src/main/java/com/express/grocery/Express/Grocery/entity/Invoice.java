@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -35,7 +36,7 @@ public class Invoice {
 
     @CreationTimestamp
     @Column(name = "invoice_date", updatable = false)
-    private Timestamp invoiceDate;
+    private LocalDateTime invoiceDate;
 
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false, unique = true)
