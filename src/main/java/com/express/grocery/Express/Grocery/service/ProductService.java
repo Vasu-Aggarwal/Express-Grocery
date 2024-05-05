@@ -17,7 +17,7 @@ public interface ProductService {
     void deleteProduct(Integer product_id);
 
     //Bulk upload products from excel
-    List<AddUpdateProductResponse> bulkUploadProducts(MultipartFile file);
+    List<AddUpdateProductResponse> bulkUploadProducts(MultipartFile file, String added_by);
 
     //Get all the products
     List<AddUpdateProductResponse> getAllProducts();

@@ -8,13 +8,16 @@ import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
 import com.express.grocery.Express.Grocery.repository.ProductRepository;
 import com.express.grocery.Express.Grocery.repository.UserRepository;
 import com.express.grocery.Express.Grocery.service.ProductService;
+import com.express.grocery.Express.Grocery.util.ProductExcelHelper;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -70,8 +73,31 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<AddUpdateProductResponse> bulkUploadProducts(MultipartFile file) {
-        return List.of();
+    public List<AddUpdateProductResponse> bulkUploadProducts(MultipartFile file, String added_by) {
+        try {
+            List<AddUpdateProductRequest> productRequestList = ProductExcelHelper.convertExcelToProduct(file.getInputStream(), added_by);
+
+            User addedByUser = userRepository.findById(added_by)
+                    .orElseThrow( () ->
+                            new ResourceNotFoundException(String.format("User with uuid : %s not found", added_by), 0)
+                    );
+
+            List<Product> products = productRequestList.stream()
+                    .map((product)->
+                        modelMapper.map(product, Product.class)
+                    ).collect(Collectors.toList());
+
+            products.forEach((product -> product.setAdded_by(addedByUser)));
+
+            productRepository.saveAll(products);
+            return products.stream()
+                    .map((product)->{
+                        return modelMapper.map(product, AddUpdateProductResponse.class);
+                    })
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
