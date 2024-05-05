@@ -1,5 +1,6 @@
 package com.express.grocery.Express.Grocery.service.implementation;
 
+import com.express.grocery.Express.Grocery.config.AppConstants;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateCouponRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateCouponResponse;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
@@ -39,7 +40,7 @@ public class CouponServiceImpl implements CouponService {
             return modelMapper.map(couponRepository.save(oldCoupon), AddUpdateCouponResponse.class);
         } else {
             Coupon coupon = modelMapper.map(addUpdateCouponRequest, Coupon.class);
-            coupon.setCouponStatus(1);
+            coupon.setCouponStatus(AppConstants.ACTIVE_COUPON.getValue());
             return modelMapper.map(couponRepository.save(coupon), AddUpdateCouponResponse.class);
         }
     }

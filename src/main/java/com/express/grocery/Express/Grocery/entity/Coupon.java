@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -20,6 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "coupon")
+@EntityListeners(AuditingEntityListener.class)
 public class Coupon {
 
     @Id
@@ -35,7 +37,7 @@ public class Coupon {
     private String couponType;
     @Column(name = "coupon_expire_date")
     private LocalDateTime couponExpireDate;
-    @Column(name = "coupon_name", nullable = false)
+    @Column(name = "coupon_name", nullable = false, unique = true)
     private String couponName;
     @Column(name = "minimum_cart_value")
     private Double minimumCartValue;

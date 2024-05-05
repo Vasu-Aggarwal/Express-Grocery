@@ -17,9 +17,5 @@ public class AddUpdateCategoryRequest {
     @NotEmpty
     @NotNull
     private String categoryName;
-
-    @NotNull
-    private Boolean isCoupon;
-    private Coupon coupon;
-
+    private String coupon;
 }
