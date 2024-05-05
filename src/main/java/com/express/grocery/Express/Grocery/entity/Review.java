@@ -31,10 +31,10 @@ public class Review {
     private Timestamp modified_on;
 
     @ManyToOne
-    @JoinColumn(name = "reviewed_by")
+    @JoinColumn(name = "reviewed_by", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "product_reviewed")
+    @JoinColumn(name = "product_reviewed", nullable = false)
     private Product product;
 }

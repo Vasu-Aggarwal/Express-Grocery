@@ -28,7 +28,7 @@ public class Order {
     private Integer order_status;
 
     @ManyToOne
-    @JoinColumn(name = "ordered_by")
+    @JoinColumn(name = "ordered_by", nullable = false)
     private User user;
 
     @ManyToOne

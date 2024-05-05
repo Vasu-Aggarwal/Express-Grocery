@@ -24,9 +24,12 @@ public class Coupon {
     private Integer coupon_id;
 
     private Double max_discount;
+    @Column(nullable = false)
     private Integer discount_percent;
+    @Column(nullable = false)
     private String coupon_type;
     private Timestamp coupon_expire_date;
+    @Column(nullable = false)
     private String coupon_name;
     private Double minimum_cart_value;
     private Integer coupon_status;

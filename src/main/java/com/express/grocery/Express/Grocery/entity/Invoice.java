@@ -19,8 +19,11 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer invoice_id;
+    @Column(nullable = false)
     private Integer invoice_status;
+    @Column(nullable = false, unique = true)
     private String invoice_number;
+    @Column(unique = true)
     private String invoice_url_path;
     private String shipping_address;
     private String billing_address;
@@ -31,7 +34,7 @@ public class Invoice {
     private Timestamp invoice_date;
 
     @OneToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = false, unique = true)
     private Order order_id;
 
     @OneToOne(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

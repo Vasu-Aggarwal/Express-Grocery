@@ -15,9 +15,12 @@ spring:
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
+#    properties:
+#      hibernate:
+#        format_sql: true
 
   datasource:
-    url: jdbc:mysql://localhost:3306/express_store
+    url: jdbc:mysql://localhost:3306/express_store?createDatabaseIfNotExist=true
     username: root
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver

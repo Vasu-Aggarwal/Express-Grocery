@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "product")
+@EntityListeners(AuditingEntityListener.class)
 public class Product {
 
     @Id
@@ -43,7 +45,7 @@ public class Product {
     private Timestamp modified_on;
 
     @ManyToOne
-    @JoinColumn(name = "added_by")
+    @JoinColumn(name = "added_by", nullable = false)
     private User added_by;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

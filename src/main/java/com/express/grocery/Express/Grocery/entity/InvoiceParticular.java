@@ -31,7 +31,7 @@ public class InvoiceParticular {
     private Integer invoice_status;
 
     @OneToOne
-    @JoinColumn(name = "invoice_id")
+    @JoinColumn(name = "invoice_id", nullable = false, unique = true)
     private Invoice invoice;
 
 }
