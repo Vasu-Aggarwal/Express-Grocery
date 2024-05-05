@@ -59,10 +59,15 @@ public class CouponServiceImpl implements CouponService {
                 .orElseThrow( () ->
                         new ResourceNotFoundException(String.format("User with uuid : %s not found", assignCouponRequest.getUserUuid()), 0)
             );
-        Coupon coupon = couponRepository.findByCouponName(assignCouponRequest.getCouponName()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", assignCouponRequest.getCouponName()), 0));;
-        user.setIsCoupon(true);
-        user.setCoupon(coupon);
-        userRepository.save(user);
+        Coupon coupon = couponRepository.findByCouponName(assignCouponRequest.getCouponName()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", assignCouponRequest.getCouponName()), 0));
+        if (coupon.getCouponType().equalsIgnoreCase("customer")){
+            user.setIsCoupon(true);
+            user.setCoupon(coupon);
+            userRepository.save(user);
+        } else {
+            throw new ResourceNotFoundException(String.format("Coupon only valid for %s", coupon.getCouponType()), 0);
+        }
+
         return new AssignCouponResponse(modelMapper.map(user, UserRegisterResponse.class), modelMapper.map(coupon, AddUpdateCouponResponse.class));
     }
 }

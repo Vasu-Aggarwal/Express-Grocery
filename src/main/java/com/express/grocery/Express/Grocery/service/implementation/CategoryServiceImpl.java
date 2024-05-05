@@ -38,8 +38,13 @@ public class CategoryServiceImpl implements CategoryService {
             category.setCategoryName(addUpdateCategoryRequest.getCategoryName());
             if (!addUpdateCategoryRequest.getCoupon().isEmpty()){
                 Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", addUpdateCategoryRequest.getCoupon()), 0));
-                category.setCoupon(coupon);
-                category.setIsCoupon(true);
+                if (coupon.getCouponType().equalsIgnoreCase("category")){
+                    category.setCoupon(coupon);
+                    category.setIsCoupon(true);
+                } else{
+                    throw new ResourceNotFoundException("Coupon only valid for customers", 0);
+                }
+
             } else {
                 category.setIsCoupon(false);
             }
@@ -49,9 +54,13 @@ public class CategoryServiceImpl implements CategoryService {
         else{
             Category category = modelMapper.map(addUpdateCategoryRequest, Category.class);
             if (!addUpdateCategoryRequest.getCoupon().isEmpty()){
-                Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", addUpdateCategoryRequest.getCoupon()), 0));;
-                category.setCoupon(coupon);
-                category.setIsCoupon(true);
+                Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", addUpdateCategoryRequest.getCoupon()), 0));
+                if (coupon.getCouponType().equalsIgnoreCase("category")){
+                    category.setCoupon(coupon);
+                    category.setIsCoupon(true);
+                } else{
+                    throw new ResourceNotFoundException(String.format("Coupon only valid for %s", coupon.getCouponType()), 0);
+                }
             } else {
                 category.setIsCoupon(false);
             }
