@@ -17,18 +17,25 @@ public class InvoiceParticular {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer ip_id;
+    @Column(name = "ip_id")
+    private Integer ipId;
 
-    private Double basic_amount;
-    private Double tax_amount;
-    private Double gst_rate;
-    private Double gst_amount;
-    private Double total_amount;
+    @Column(name = "basic_amount")
+    private Double basicAmount;
+    @Column(name = "tax_amount")
+    private Double taxAmount;
+    @Column(name = "gst_rate")
+    private Double gstRate;
+    @Column(name = "gst_amount")
+    private Double gstAmount;
+    @Column(name = "total_amount")
+    private Double totalAmount;
 
     @CreationTimestamp
     @Column(name = "invoice_date", updatable = false)
-    private Timestamp invoice_date;
-    private Integer invoice_status;
+    private Timestamp invoiceDate;
+    @Column(name = "invoice_status")
+    private Integer invoiceStatus;
 
     @OneToOne
     @JoinColumn(name = "invoice_id", nullable = false, unique = true)

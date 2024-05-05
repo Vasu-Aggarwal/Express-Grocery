@@ -2,6 +2,7 @@ package com.express.grocery.Express.Grocery.util;
 
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateProductRequest;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -31,49 +32,62 @@ public class ProductExcelHelper {
             XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
             XSSFSheet product_data = workbook.getSheet("product_data");
             int rowNumber = 0;
-            Iterator<Row> iterator = product_data.iterator();
 
-            while(iterator.hasNext()){
-                Row row = iterator.next();
-
-                if (rowNumber==0){
+            for (Row row : product_data) {
+                if (rowNumber == 0) { // Skip header row
                     rowNumber++;
                     continue;
                 }
 
-                Iterator<Cell> cellIterator = row.iterator();
-                int cid = 0;
                 AddUpdateProductRequest p = new AddUpdateProductRequest();
-                p.setAdded_by(added_by);
-                while (cellIterator.hasNext()){
-                    Cell cell = cellIterator.next();
-                    switch (cid){
+                p.setAddedBy(added_by);
+
+                for (int cid = 0; cid <= 7; cid++) {
+                    Cell cell = row.getCell(cid, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+
+                    switch (cid) {
                         case 0:
-                            break;
+                            break; // Skip the first cell
                         case 1:
-                            p.setProduct_name(cell.getStringCellValue());
+                            p.setProductName(cell.getStringCellValue());
                             break;
                         case 2:
-                            p.setAbout_product(cell.getStringCellValue());
+                            p.setAboutProduct(cell.getStringCellValue());
                             break;
                         case 3:
-                            p.setProduct_price(cell.getNumericCellValue());
+                            if (cell.getCellType() == CellType.NUMERIC) {
+                                p.setProductPrice(cell.getNumericCellValue());
+                            } else {
+                                // Handle non-numeric values or empty cells
+                            }
                             break;
                         case 4:
-                            p.setIn_stock_quantity((int) cell.getNumericCellValue());
+                            if (cell.getCellType() == CellType.NUMERIC) {
+                                p.setInStockQuantity((int) cell.getNumericCellValue());
+                            } else {
+                                // Handle non-numeric values or empty cells
+                            }
                             break;
                         case 5:
-                            p.setIs_available(cell.getBooleanCellValue());
+                            p.setIsAvailable(cell.getBooleanCellValue());
                             break;
                         case 6:
-                            p.setProduct_img(cell.getStringCellValue());
+                            p.setProductImg(cell.getStringCellValue());
+                            break;
+                        case 7:
+                            String categoriesCellValue = cell.getStringCellValue();
+                            if (!categoriesCellValue.isEmpty()) {
+                                List<String> categories = List.of(categoriesCellValue.split(",\\s*"));
+                                p.setCategories(categories);
+                            }
                             break;
                         default:
                             break;
                     }
-                    cid++;
                 }
+
                 productList.add(p);
+                rowNumber++;
             }
 
         } catch (Exception e){

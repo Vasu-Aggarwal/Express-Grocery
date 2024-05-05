@@ -20,7 +20,8 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String user_uuid;
+    @Column(name = "user_uuid")
+    private String userUuid;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -39,8 +40,9 @@ public class User {
 
     @CreationTimestamp
     @Column(name = "created_on", updatable = false)
-    private Timestamp created_on;
-    private Boolean is_coupon;
+    private Timestamp createdOn;
+    @Column(name = "is_coupon")
+    private Boolean isCoupon;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Order> orders = new ArrayList<>();
@@ -48,7 +50,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "added_by", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "addedBy", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Product> products = new ArrayList<>();
 
 }

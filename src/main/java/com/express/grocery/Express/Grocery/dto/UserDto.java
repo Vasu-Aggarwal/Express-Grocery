@@ -15,12 +15,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private String user_uuid;
+    private String userUuid;
     private String username;
     private String email;
     private Integer mobile;
     private String password;
     private String name;
-    private Timestamp created_on;
-    private Boolean is_coupon;
+    private Timestamp createdOn;
+    private Boolean isCoupon;
 }

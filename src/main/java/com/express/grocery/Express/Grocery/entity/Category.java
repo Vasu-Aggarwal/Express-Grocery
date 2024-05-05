@@ -17,10 +17,12 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer category_id;
-    @Column(nullable = false, unique = true)
-    private String category_name;
-    private Boolean is_coupon;
+    @Column(name = "category_id")
+    private Integer categoryId;
+    @Column(name = "category_name", nullable = false, unique = true)
+    private String categoryName;
+    @Column(name = "is_coupon")
+    private Boolean isCoupon;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();

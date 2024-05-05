@@ -12,14 +12,14 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class ProductDto {
 
-    private Integer product_id;
-    private Double product_price;
-    private Integer in_stock_quantity;
-    private String product_name;
-    private Boolean is_available;
-    private String about_product;
-    private String product_img;
-    private Timestamp added_on;
-    private Timestamp modified_on;
-    private User added_by;
+    private Integer productId;
+    private Double productPrice;
+    private Integer inStockQuantity;
+    private String productName;
+    private Boolean isAvailable;
+    private String aboutProduct;
+    private String productImg;
+    private Timestamp addedOn;
+    private Timestamp modifiedOn;
+    private User addedBy;
 }

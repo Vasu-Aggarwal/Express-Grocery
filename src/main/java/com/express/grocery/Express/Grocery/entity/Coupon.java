@@ -21,26 +21,31 @@ public class Coupon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer coupon_id;
+    @Column(name = "coupon_id")
+    private Integer couponId;
 
-    private Double max_discount;
-    @Column(nullable = false)
-    private Integer discount_percent;
-    @Column(nullable = false)
-    private String coupon_type;
-    private Timestamp coupon_expire_date;
-    @Column(nullable = false)
-    private String coupon_name;
-    private Double minimum_cart_value;
-    private Integer coupon_status;
+    @Column(name = "max_discount")
+    private Double maxDiscount;
+    @Column(name = "discount_percent", nullable = false)
+    private Integer discountPercent;
+    @Column(name = "coupon_type", nullable = false)
+    private String couponType;
+    @Column(name = "coupon_expire_date")
+    private Timestamp couponExpireDate;
+    @Column(name = "coupon_name", nullable = false)
+    private String couponName;
+    @Column(name = "minimum_cart_value")
+    private Double minimumCartValue;
+    @Column(name = "coupon_status")
+    private Integer couponStatus;
 
     @CreationTimestamp
     @Column(name = "created_on", updatable = false)
-    private Timestamp created_on;
+    private Timestamp createdOn;
 
     @LastModifiedDate
     @Column(name = "modified_on")
-    private Timestamp modified_on;
+    private Timestamp modifiedOn;
 
     //Coupon to user
 //    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

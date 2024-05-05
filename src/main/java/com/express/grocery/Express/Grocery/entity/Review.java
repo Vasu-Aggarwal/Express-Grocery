@@ -18,17 +18,19 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer review_id;
+    @Column(name = "review_id")
+    private Integer reviewId;
     private Integer rating;
-    private String review_comment;
+    @Column(name = "review_comment")
+    private String reviewComment;
 
     @CreationTimestamp
     @Column(name = "added_on", updatable = false)
-    private Timestamp added_on;
+    private Timestamp addedOn;
 
     @LastModifiedDate
     @Column(name = "modified_on")
-    private Timestamp modified_on;
+    private Timestamp modifiedOn;
 
     @ManyToOne
     @JoinColumn(name = "reviewed_by", nullable = false)

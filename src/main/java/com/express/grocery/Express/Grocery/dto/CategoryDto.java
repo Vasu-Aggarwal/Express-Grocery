@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CategoryDto {
 
-    private Integer category_id;
-    private String category_name;
-    private Boolean is_coupon;
+    private Integer categoryId;
+    private String categoryName;
+    private Boolean isCoupon;
     private Coupon coupon;
 }

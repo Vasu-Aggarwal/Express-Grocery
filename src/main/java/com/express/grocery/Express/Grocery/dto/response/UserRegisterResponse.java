@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserRegisterResponse {
-    private String user_uuid;
+    private String userUuid;
     private String username;
     private String email;
     private Long mobile;
     private String name;
-    private Boolean is_coupon;
+    private Boolean isCoupon;
 }

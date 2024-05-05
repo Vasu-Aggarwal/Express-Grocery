@@ -18,30 +18,30 @@ import java.util.List;
 @NoArgsConstructor
 public class AddUpdateProductRequest {
 
-    private Integer product_id;
+    private Integer productId;
 
     @NotNull
     @Min(value = 1)
-    private Double product_price;
+    private Double productPrice;
 
     @NotNull
     @Min(value = 1)
-    private Integer in_stock_quantity;
+    private Integer inStockQuantity;
 
     @NotNull
     @NotEmpty
-    private String product_name;
+    private String productName;
 
     @NotNull
-    private Boolean is_available;
+    private Boolean isAvailable;
 
     @NotNull
     @NotEmpty
-    private String about_product;
-    private String product_img;
+    private String aboutProduct;
+    private String productImg;
 
     @NotNull(message = "Added by cannot be null")
-    private String added_by;
+    private String addedBy;
 
-    private List<Category> categories = new ArrayList<>();
+    private List<String> categories = new ArrayList<>();
 }

@@ -19,13 +19,16 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer order_id;
+    @Column(name = "order_id")
+    private Integer orderId;
 
     @CreationTimestamp
     @Column(name = "order_date")
-    private Timestamp order_date;
-    private Double order_amount;
-    private Integer order_status;
+    private Timestamp orderDate;
+    @Column(name = "order_amount")
+    private Double orderAmount;
+    @Column(name = "order_status")
+    private Integer orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "ordered_by", nullable = false)
@@ -35,7 +38,7 @@ public class Order {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
-    @OneToOne(mappedBy = "order_id", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "order_Id", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Invoice invoice;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

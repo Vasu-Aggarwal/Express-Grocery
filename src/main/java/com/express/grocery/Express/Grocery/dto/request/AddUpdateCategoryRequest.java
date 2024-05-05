@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddUpdateCategoryRequest {
 
-    private Integer category_id;
+    private Integer categoryId;
 
     @NotEmpty
     @NotNull
-    private String category_name;
+    private String categoryName;
 
     @NotNull
-    private Boolean is_coupon;
+    private Boolean isCoupon;
     private Coupon coupon;
 
 }

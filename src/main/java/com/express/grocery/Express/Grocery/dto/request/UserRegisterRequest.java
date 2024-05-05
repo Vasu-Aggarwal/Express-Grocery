@@ -28,5 +28,5 @@ public class UserRegisterRequest {
     @NotEmpty
     @NotNull
     private String name;
-    private Boolean is_coupon;
+    private Boolean isCoupon;
 }

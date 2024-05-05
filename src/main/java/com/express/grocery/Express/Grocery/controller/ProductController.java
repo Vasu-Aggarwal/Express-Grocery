@@ -36,4 +36,10 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<List<AddUpdateProductResponse>> getAllProducts(){
+        List<AddUpdateProductResponse> productResponses = productService.getAllProducts();
+        return new ResponseEntity<>(productResponses, HttpStatus.ACCEPTED);
+    }
+
 }

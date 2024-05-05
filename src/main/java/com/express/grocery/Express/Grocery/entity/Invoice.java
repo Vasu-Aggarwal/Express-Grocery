@@ -18,24 +18,28 @@ public class Invoice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer invoice_id;
-    @Column(nullable = false)
-    private Integer invoice_status;
-    @Column(nullable = false, unique = true)
-    private String invoice_number;
-    @Column(unique = true)
-    private String invoice_url_path;
-    private String shipping_address;
-    private String billing_address;
-    private Integer billing_contact;
+    @Column(name = "invoice_id")
+    private Integer invoiceId;
+    @Column(name = "invoice_status", nullable = false)
+    private Integer invoiceStatus;
+    @Column(name = "invoice_number", nullable = false, unique = true)
+    private String invoiceNumber;
+    @Column(name = "invoice_url_path", unique = true)
+    private String invoiceUrlPath;
+    @Column(name = "shipping_address")
+    private String shippingAddress;
+    @Column(name = "billing_address")
+    private String billingAddress;
+    @Column(name = "billing_contact")
+    private Integer billingContact;
 
     @CreationTimestamp
     @Column(name = "invoice_date", updatable = false)
-    private Timestamp invoice_date;
+    private Timestamp invoiceDate;
 
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false, unique = true)
-    private Order order_id;
+    private Order order_Id;
 
     @OneToOne(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private InvoiceParticular inp;

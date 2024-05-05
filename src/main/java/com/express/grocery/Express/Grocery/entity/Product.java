@@ -22,31 +22,32 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer product_id;
-
-    private Double product_price;
-
-    private Integer in_stock_quantity;
-
-    private String product_name;
-
-    private Boolean is_available;
-
-    private String about_product;
-
-    private String product_img;
+    @Column(name = "product_id")
+    private Integer productId;
+    @Column(name = "product_price")
+    private Double productPrice;
+    @Column(name = "in_stock_quantity")
+    private Integer inStockQuantity;
+    @Column(name = "product_name")
+    private String productName;
+    @Column(name = "is_available")
+    private Boolean isAvailable;
+    @Column(name = "about_product")
+    private String aboutProduct;
+    @Column(name = "product_img")
+    private String productImg;
 
     @CreationTimestamp
     @Column(name = "added_on", updatable = false)
-    private Timestamp added_on;
+    private Timestamp addedOn;
 
     @LastModifiedDate
     @Column(name = "modified_on")
-    private Timestamp modified_on;
+    private Timestamp modifiedOn;
 
     @ManyToOne
     @JoinColumn(name = "added_by", nullable = false)
-    private User added_by;
+    private User addedBy;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "category_id"))

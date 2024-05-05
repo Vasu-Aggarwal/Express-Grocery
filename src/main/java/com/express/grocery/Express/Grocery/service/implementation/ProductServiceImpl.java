@@ -2,9 +2,11 @@ package com.express.grocery.Express.Grocery.service.implementation;
 
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateProductRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
+import com.express.grocery.Express.Grocery.entity.Category;
 import com.express.grocery.Express.Grocery.entity.Product;
 import com.express.grocery.Express.Grocery.entity.User;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
+import com.express.grocery.Express.Grocery.repository.CategoryRepository;
 import com.express.grocery.Express.Grocery.repository.ProductRepository;
 import com.express.grocery.Express.Grocery.repository.UserRepository;
 import com.express.grocery.Express.Grocery.service.ProductService;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,34 +34,41 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Override
     @Transactional
     public AddUpdateProductResponse addUpdateProduct(AddUpdateProductRequest addUpdateProductRequest) {
         Product product = modelMapper.map(addUpdateProductRequest, Product.class);
         //Update product
-        if (addUpdateProductRequest.getProduct_id()!=null){
-            Product oldProduct = productRepository.findById(addUpdateProductRequest.getProduct_id())
+        if (addUpdateProductRequest.getProductId()!=null){
+            Product oldProduct = productRepository.findById(addUpdateProductRequest.getProductId())
                     .orElseThrow(()->
-                            new ResourceNotFoundException(String.format("Product with product_id : %s not found", addUpdateProductRequest.getProduct_id()), 0)
+                            new ResourceNotFoundException(String.format("Product with product_id : %s not found", addUpdateProductRequest.getProductId()), 0)
                     );
-            oldProduct.setAbout_product(addUpdateProductRequest.getAbout_product());
-            oldProduct.setProduct_img(addUpdateProductRequest.getProduct_img());
-            oldProduct.setProduct_name(addUpdateProductRequest.getProduct_name());
-            oldProduct.setProduct_price(addUpdateProductRequest.getProduct_price());
-            oldProduct.setIn_stock_quantity(addUpdateProductRequest.getIn_stock_quantity());
-            oldProduct.setIs_available(addUpdateProductRequest.getIs_available());
+            List<Category> categories = categoryRepository.findAllByCategoryNameIn(addUpdateProductRequest.getCategories());
+
+            oldProduct.setAboutProduct(addUpdateProductRequest.getAboutProduct());
+            oldProduct.setProductImg(addUpdateProductRequest.getProductImg());
+            oldProduct.setProductName(addUpdateProductRequest.getProductName());
+            oldProduct.setProductPrice(addUpdateProductRequest.getProductPrice());
+            oldProduct.setInStockQuantity(addUpdateProductRequest.getInStockQuantity());
+            oldProduct.setIsAvailable(addUpdateProductRequest.getIsAvailable());
+            oldProduct.setCategories(categories);
 
             return modelMapper.map(productRepository.save(oldProduct), AddUpdateProductResponse.class);
         }
 
         //Add new product
         else {
-            User added_by = userRepository.findById(addUpdateProductRequest.getAdded_by())
+            User added_by = userRepository.findById(addUpdateProductRequest.getAddedBy())
                     .orElseThrow( () ->
-                            new ResourceNotFoundException(String.format("User with uuid : %s not found", addUpdateProductRequest.getAdded_by()), 0)
+                            new ResourceNotFoundException(String.format("User with uuid : %s not found", addUpdateProductRequest.getAddedBy()), 0)
                     );
-
-            product.setAdded_by(added_by);
+            List<Category> categories = categoryRepository.findAllByCategoryNameIn(addUpdateProductRequest.getCategories());
+            product.setCategories(categories);
+            product.setAddedBy(added_by);
             return modelMapper.map(productRepository.save(product), AddUpdateProductResponse.class);
         }
     }
@@ -87,7 +97,12 @@ public class ProductServiceImpl implements ProductService {
                         modelMapper.map(product, Product.class)
                     ).collect(Collectors.toList());
 
-            products.forEach((product -> product.setAdded_by(addedByUser)));
+            products.forEach((product -> product.setAddedBy(addedByUser)));
+
+            for (int i=0;i<productRequestList.size();i++){
+                List<Category> categories = categoryRepository.findAllByCategoryNameIn(productRequestList.get(i).getCategories());
+                products.get(i).setCategories(categories);
+            }
 
             productRepository.saveAll(products);
             return products.stream()
@@ -102,7 +117,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<AddUpdateProductResponse> getAllProducts() {
-        return List.of();
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map((product)-> modelMapper.map(product, AddUpdateProductResponse.class))
+                .collect(Collectors.toList());
     }
 
     @Override
