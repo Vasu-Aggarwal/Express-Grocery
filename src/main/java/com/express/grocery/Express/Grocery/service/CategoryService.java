@@ -2,6 +2,7 @@ package com.express.grocery.Express.Grocery.service;
 
 import com.express.grocery.Express.Grocery.dto.CategoryDto;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateCategoryRequest;
+import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
 
 import java.util.List;
 
@@ -12,5 +13,5 @@ public interface CategoryService {
     void deleteCategory(Integer category_id);
     List<CategoryDto> getAllCategories();
     CategoryDto getCategoryById(Integer category_id);
-
+    List<AddUpdateProductResponse> getProductsByCategoryName(String categoryName);
 }

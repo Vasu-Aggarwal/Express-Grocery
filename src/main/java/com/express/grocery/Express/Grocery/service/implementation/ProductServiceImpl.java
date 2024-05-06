@@ -116,7 +116,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<AddUpdateProductResponse> getAllProducts() {
+    public List<AddUpdateProductResponse> allProductList() {
         List<Product> products = productRepository.findAll();
         return products.stream()
                 .map((product)-> modelMapper.map(product, AddUpdateProductResponse.class))
@@ -125,6 +125,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public AddUpdateProductResponse getProductById(Integer product_id) {
-        return null;
+        Product product = productRepository.findById(product_id).orElseThrow(()-> new ResourceNotFoundException(String.format("Product with id: %s not found", product_id), 0));
+        return modelMapper.map(product, AddUpdateProductResponse.class);
     }
+
+    @Override
+    public AddUpdateProductResponse getProductByName(String productName) {
+        Product product = productRepository.findByProductNameContainingIgnoreCase(productName).orElseThrow(()-> new ResourceNotFoundException(String.format("Product not found: %s", productName), 0));
+        return modelMapper.map(product, AddUpdateProductResponse.class);
+    }
+
 }

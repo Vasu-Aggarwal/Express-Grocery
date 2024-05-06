@@ -2,17 +2,21 @@ package com.express.grocery.Express.Grocery.service.implementation;
 
 import com.express.grocery.Express.Grocery.dto.CategoryDto;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateCategoryRequest;
+import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
 import com.express.grocery.Express.Grocery.entity.Category;
 import com.express.grocery.Express.Grocery.entity.Coupon;
+import com.express.grocery.Express.Grocery.entity.Product;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
 import com.express.grocery.Express.Grocery.repository.CategoryRepository;
 import com.express.grocery.Express.Grocery.repository.CouponRepository;
+import com.express.grocery.Express.Grocery.repository.ProductRepository;
 import com.express.grocery.Express.Grocery.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -22,6 +26,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CouponRepository couponRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -53,8 +60,9 @@ public class CategoryServiceImpl implements CategoryService {
         //Add the category
         else{
             Category category = modelMapper.map(addUpdateCategoryRequest, Category.class);
-            if (!addUpdateCategoryRequest.getCoupon().isEmpty()){
+            if (addUpdateCategoryRequest.getCoupon() != null){
                 Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", addUpdateCategoryRequest.getCoupon()), 0));
+
                 if (coupon.getCouponType().equalsIgnoreCase("category")){
                     category.setCoupon(coupon);
                     category.setIsCoupon(true);
@@ -81,5 +89,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getCategoryById(Integer category_id) {
         return null;
+    }
+
+    @Override
+    public List<AddUpdateProductResponse> getProductsByCategoryName(String categoryName) {
+        Category category = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName);
+        List<Product> products = category.getProducts();
+        return products.stream().map((product)-> modelMapper.map(product, AddUpdateProductResponse.class)).collect(Collectors.toList());
     }
 }

@@ -68,4 +68,7 @@ public class Coupon {
     @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Order> orders = new ArrayList<>();
 
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Cart> carts = new ArrayList<>();
+
 }
