@@ -17,9 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 public class AddToCartRequest {
 
-    private Integer cartId;
+    private Integer cartDetailId;
     private Integer productQuantity;
-    private String user;
-    private String coupon;
     private Integer product;
+    private Integer cart;
 }

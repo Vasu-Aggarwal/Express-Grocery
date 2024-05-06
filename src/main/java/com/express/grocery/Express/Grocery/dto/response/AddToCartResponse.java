@@ -1,8 +1,6 @@
 package com.express.grocery.Express.Grocery.dto.response;
 
-import com.express.grocery.Express.Grocery.entity.Coupon;
-import com.express.grocery.Express.Grocery.entity.Product;
-import com.express.grocery.Express.Grocery.entity.User;
+import com.express.grocery.Express.Grocery.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,11 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 public class AddToCartResponse {
 
-    private Integer cartId;
-    private Boolean couponApplied;
+    private Integer cartDetailId;
     private Integer productQuantity;
-    private UserRegisterResponse user;
-    private AddUpdateCouponResponse coupon;
+    private CartResponse cart;
     private LocalDateTime createdOn;
-    private List<AddUpdateProductResponse> products = new ArrayList<>();
+    private AddUpdateProductResponse product;
 }

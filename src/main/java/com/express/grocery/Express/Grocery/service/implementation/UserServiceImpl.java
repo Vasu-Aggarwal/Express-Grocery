@@ -2,7 +2,9 @@ package com.express.grocery.Express.Grocery.service.implementation;
 
 import com.express.grocery.Express.Grocery.dto.request.UserRegisterRequest;
 import com.express.grocery.Express.Grocery.dto.response.UserRegisterResponse;
+import com.express.grocery.Express.Grocery.entity.Cart;
 import com.express.grocery.Express.Grocery.entity.User;
+import com.express.grocery.Express.Grocery.repository.CartRepository;
 import com.express.grocery.Express.Grocery.repository.UserRepository;
 import com.express.grocery.Express.Grocery.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -22,11 +24,19 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CartRepository cartRepository;
+
     @Override
     public UserRegisterResponse createUser(UserRegisterRequest userRegisterRequest) {
         User user = modelMapper.map(userRegisterRequest, User.class);
         user.setUsername(userRegisterRequest.getName().substring(0, 2)+userRegisterRequest.getMobile().toString().substring(0, 3)+ UUID.randomUUID().toString().substring(0, 4));
-        return modelMapper.map(userRepository.save(user), UserRegisterResponse.class);
+        User savedUser = userRepository.save(user);
+        //When user is created, create a new cart for this user to add the products
+        Cart cart = new Cart();
+        cart.setUser(savedUser);
+        cartRepository.save(cart);
+        return modelMapper.map(savedUser, UserRegisterResponse.class);
     }
 
     @Override
