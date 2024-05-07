@@ -1,5 +1,6 @@
 package com.express.grocery.Express.Grocery.entity;
 
+import com.express.grocery.Express.Grocery.config.CouponType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,7 +35,8 @@ public class Coupon {
     @Column(name = "discount_percent", nullable = false)
     private Integer discountPercent;
     @Column(name = "coupon_type", nullable = false)
-    private String couponType;
+    @Enumerated(EnumType.STRING)
+    private CouponType couponType;
     @Column(name = "coupon_expire_date")
     private LocalDateTime couponExpireDate;
     @Column(name = "coupon_name", nullable = false, unique = true)

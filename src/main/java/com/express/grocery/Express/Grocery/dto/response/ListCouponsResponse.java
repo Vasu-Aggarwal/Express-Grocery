@@ -13,5 +13,6 @@ public class ListCouponsResponse {
     private Integer discountPercent;
     private Double maxDiscount;
     private String couponName;
+    private String couponType;
 
 }

@@ -1,5 +1,6 @@
 package com.express.grocery.Express.Grocery.service.implementation;
 
+import com.express.grocery.Express.Grocery.config.CouponType;
 import com.express.grocery.Express.Grocery.dto.CategoryDto;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateCategoryRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
@@ -45,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setCategoryName(addUpdateCategoryRequest.getCategoryName());
             if (!addUpdateCategoryRequest.getCoupon().isEmpty()){
                 Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", addUpdateCategoryRequest.getCoupon()), 0));
-                if (coupon.getCouponType().equalsIgnoreCase("category")){
+                if (coupon.getCouponType() == CouponType.CATEGORY){
                     category.setCoupon(coupon);
                     category.setIsCoupon(true);
                 } else{
@@ -63,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
             if (addUpdateCategoryRequest.getCoupon() != null){
                 Coupon coupon = couponRepository.findByCouponName(addUpdateCategoryRequest.getCoupon()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", addUpdateCategoryRequest.getCoupon()), 0));
 
-                if (coupon.getCouponType().equalsIgnoreCase("category")){
+                if (coupon.getCouponType() == CouponType.CATEGORY){
                     category.setCoupon(coupon);
                     category.setIsCoupon(true);
                 } else{

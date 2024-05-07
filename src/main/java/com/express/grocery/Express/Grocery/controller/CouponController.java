@@ -4,15 +4,16 @@ import com.express.grocery.Express.Grocery.dto.request.AddUpdateCouponRequest;
 import com.express.grocery.Express.Grocery.dto.request.AssignCouponRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateCouponResponse;
 import com.express.grocery.Express.Grocery.dto.response.AssignCouponResponse;
+import com.express.grocery.Express.Grocery.dto.response.ListCouponsResponse;
 import com.express.grocery.Express.Grocery.service.CouponService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/coupon")
@@ -31,6 +32,12 @@ public class CouponController {
     public ResponseEntity<AssignCouponResponse> assignCoupon(@RequestBody @Valid AssignCouponRequest assignCouponRequest){
         AssignCouponResponse response = couponService.assignCoupon(assignCouponRequest);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/listCoupons/{userUuid}")
+    public ResponseEntity<List<ListCouponsResponse>> listCoupons(@PathVariable String userUuid){
+        List<ListCouponsResponse> listCouponsResponses = couponService.listCoupons(userUuid);
+        return new ResponseEntity<>(listCouponsResponses, HttpStatus.OK);
     }
 
 }

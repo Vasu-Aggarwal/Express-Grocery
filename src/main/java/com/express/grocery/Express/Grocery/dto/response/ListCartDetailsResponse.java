@@ -13,6 +13,7 @@ public class ListCartDetailsResponse {
 
     private List<AddToCartResponse> productDetail;
     private long totalProducts;
-    private Double totalAmount;
-    private Double totalDiscount;
+    private Double beforeDiscount;
+    private Double afterDiscount;
+    private Double savedAmount;
 }

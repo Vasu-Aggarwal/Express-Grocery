@@ -19,5 +19,6 @@ public class AddToCartResponse {
     private CartResponse cart;
     private LocalDateTime createdOn;
     private AddUpdateProductResponse product;
-    private Double discountedPrice;
+    private Double productAmount;
+    private Double productDiscountedAmount;
 }

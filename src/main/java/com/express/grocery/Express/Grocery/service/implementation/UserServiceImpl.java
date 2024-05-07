@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
     public UserRegisterResponse createUser(UserRegisterRequest userRegisterRequest) {
         User user = modelMapper.map(userRegisterRequest, User.class);
         user.setUsername(userRegisterRequest.getName().substring(0, 2)+userRegisterRequest.getMobile().toString().substring(0, 3)+ UUID.randomUUID().toString().substring(0, 4));
+        user.setIsCoupon(false);
         User savedUser = userRepository.save(user);
         //When user is created, create a new cart for this user to add the products
         Cart cart = new Cart();

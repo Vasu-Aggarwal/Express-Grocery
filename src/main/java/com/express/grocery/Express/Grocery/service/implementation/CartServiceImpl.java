@@ -2,6 +2,7 @@ package com.express.grocery.Express.Grocery.service.implementation;
 
 import com.express.grocery.Express.Grocery.dto.request.AddToCartRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddToCartResponse;
+import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
 import com.express.grocery.Express.Grocery.dto.response.ListCartDetailsResponse;
 import com.express.grocery.Express.Grocery.entity.*;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
@@ -46,18 +47,26 @@ public class CartServiceImpl implements CartService {
         //Get cart details of the user
         List<AddToCartResponse> cartDetails = cart.getCartDetails().stream().map((cartDetail)-> modelMapper.map(cartDetail, AddToCartResponse.class)).collect(Collectors.toList());
 
+        for (AddToCartResponse cartResponse: cartDetails){
+            AddUpdateProductResponse productResponse = cartResponse.getProduct();
+            ProductServiceImpl.productDiscountHelper(productResponse);
+            cartResponse.setProductAmount(cartResponse.getProductQuantity()*productResponse.getProductPrice());
+            cartResponse.setProductDiscountedAmount(cartResponse.getProductQuantity()*productResponse.getProductDiscountedPrice());
+        }
         ListCartDetailsResponse listCartDetailsResponse = new ListCartDetailsResponse();
-
-        //find product categories
-        //find category with maximum discount percent
 
         listCartDetailsResponse.setProductDetail(cartDetails);
         listCartDetailsResponse.setTotalProducts(cartDetails.size());
 
         //Calculate the total amount
-        double totalAmount = cartDetails.stream().mapToDouble(cartDetail -> cartDetail.getProduct().getProductPrice()).sum();
+        double totalAmount = cartDetails.stream().mapToDouble(cartDetail -> cartDetail.getProductAmount()).sum();
 
-        listCartDetailsResponse.setTotalAmount(totalAmount);
+        //Calculate the total discount amount
+        double discountAmount = cartDetails.stream().mapToDouble(cartDetail -> cartDetail.getProductDiscountedAmount()).sum();
+
+        listCartDetailsResponse.setBeforeDiscount(totalAmount);
+        listCartDetailsResponse.setAfterDiscount(discountAmount);
+        listCartDetailsResponse.setSavedAmount(totalAmount-discountAmount);
 
         //Then show the cart details of that cart
         return listCartDetailsResponse;

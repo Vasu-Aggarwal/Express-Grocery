@@ -1,6 +1,7 @@
 package com.express.grocery.Express.Grocery.service.implementation;
 
 import com.express.grocery.Express.Grocery.config.AppConstants;
+import com.express.grocery.Express.Grocery.config.CouponType;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateCouponRequest;
 import com.express.grocery.Express.Grocery.dto.request.AssignCouponRequest;
 import com.express.grocery.Express.Grocery.dto.response.*;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,7 +40,7 @@ public class CouponServiceImpl implements CouponService {
                     .orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon with id: %s not found", addUpdateCouponRequest.getCouponId()), 0));
             oldCoupon.setCouponStatus(addUpdateCouponRequest.getCouponStatus());
             oldCoupon.setCouponName(addUpdateCouponRequest.getCouponName());
-            oldCoupon.setCouponType(addUpdateCouponRequest.getCouponType());
+            oldCoupon.setCouponType(CouponType.valueOf(addUpdateCouponRequest.getCouponType()));
             oldCoupon.setCouponExpireDate(addUpdateCouponRequest.getCouponExpireDate());
             oldCoupon.setDiscountPercent(addUpdateCouponRequest.getDiscountPercent());
             oldCoupon.setMaxDiscount(addUpdateCouponRequest.getMaxDiscount());
@@ -58,7 +60,7 @@ public class CouponServiceImpl implements CouponService {
                         new ResourceNotFoundException(String.format("User with uuid : %s not found", assignCouponRequest.getUserUuid()), 0)
             );
         Coupon coupon = couponRepository.findByCouponName(assignCouponRequest.getCouponName()).orElseThrow(()-> new ResourceNotFoundException(String.format("Coupon not found: %s", assignCouponRequest.getCouponName()), 0));
-        if (coupon.getCouponType().equalsIgnoreCase("customer")){
+        if (coupon.getCouponType() == CouponType.CUSTOMER){
             user.setIsCoupon(true);
             user.setCoupon(coupon);
             userRepository.save(user);
@@ -70,7 +72,21 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public List<ListCartDetailsResponse> listCoupons(String userUuid) {
-        return List.of();
+    public List<ListCouponsResponse> listCoupons(String userUuid) {
+
+        List<ListCouponsResponse> couponList = new ArrayList<>();
+
+        //find user on which available coupons will be shown
+        User user = userRepository.findById(userUuid).orElseThrow(()-> new ResourceNotFoundException("User not found", 0));
+        if (!user.getIsCoupon()){
+            throw new ResourceNotFoundException("No coupons available", 0);
+        } else {
+            if (user.getCoupon() == null)
+                throw new ResourceNotFoundException("No coupons available", 0);
+            //Check if coupon found or no
+            Coupon coupon = couponRepository.findById(user.getCoupon().getCouponId()).orElseThrow(()-> new ResourceNotFoundException("No coupons available", 0));
+            couponList.add(modelMapper.map(coupon, ListCouponsResponse.class));
+        }
+        return couponList;
     }
 }

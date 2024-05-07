@@ -49,7 +49,10 @@ public class CartDetailServiceImpl implements CartDetailService {
         CartDetail cartDetail = modelMapper.map(addToCartRequest, CartDetail.class);
         cartDetail.setCart(cart);
         cartDetail.setProduct(product);
-        return modelMapper.map(cartDetailRepository.save(cartDetail), AddToCartResponse.class);
-
+        AddToCartResponse cartResponse = modelMapper.map(cartDetailRepository.save(cartDetail), AddToCartResponse.class);
+        ProductServiceImpl.productDiscountHelper(cartResponse.getProduct());
+        cartResponse.setProductDiscountedAmount(cartResponse.getProduct().getProductDiscountedPrice()*cartResponse.getProductQuantity());
+        cartResponse.setProductAmount(cartResponse.getProduct().getProductPrice()*cartResponse.getProductQuantity());
+        return cartResponse;
     }
 }
