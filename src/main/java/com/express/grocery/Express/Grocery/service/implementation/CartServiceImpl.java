@@ -2,10 +2,8 @@ package com.express.grocery.Express.Grocery.service.implementation;
 
 import com.express.grocery.Express.Grocery.dto.request.AddToCartRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddToCartResponse;
-import com.express.grocery.Express.Grocery.entity.Cart;
-import com.express.grocery.Express.Grocery.entity.Coupon;
-import com.express.grocery.Express.Grocery.entity.Product;
-import com.express.grocery.Express.Grocery.entity.User;
+import com.express.grocery.Express.Grocery.dto.response.ListCartDetailsResponse;
+import com.express.grocery.Express.Grocery.entity.*;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
 import com.express.grocery.Express.Grocery.repository.CartRepository;
 import com.express.grocery.Express.Grocery.repository.CouponRepository;
@@ -38,14 +36,30 @@ public class CartServiceImpl implements CartService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<AddToCartResponse> getCartDetails(String userUuid) {
+    public ListCartDetailsResponse getCartDetails(String userUuid) {
         //Find user
         User user = userRepository.findById(userUuid).orElseThrow(()-> new ResourceNotFoundException(String.format("User not found with id: %s", userUuid), 0));
 
         //Find cart according to the user
         Cart cart = cartRepository.findByUser(user);
 
+        //Get cart details of the user
+        List<AddToCartResponse> cartDetails = cart.getCartDetails().stream().map((cartDetail)-> modelMapper.map(cartDetail, AddToCartResponse.class)).collect(Collectors.toList());
+
+        ListCartDetailsResponse listCartDetailsResponse = new ListCartDetailsResponse();
+
+        //find product categories
+        //find category with maximum discount percent
+
+        listCartDetailsResponse.setProductDetail(cartDetails);
+        listCartDetailsResponse.setTotalProducts(cartDetails.size());
+
+        //Calculate the total amount
+        double totalAmount = cartDetails.stream().mapToDouble(cartDetail -> cartDetail.getProduct().getProductPrice()).sum();
+
+        listCartDetailsResponse.setTotalAmount(totalAmount);
+
         //Then show the cart details of that cart
-        return cart.getCartDetails().stream().map((cartDetail)-> modelMapper.map(cartDetail, AddToCartResponse.class)).collect(Collectors.toList());
+        return listCartDetailsResponse;
     }
 }

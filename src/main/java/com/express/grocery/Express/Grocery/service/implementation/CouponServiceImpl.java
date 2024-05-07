@@ -3,10 +3,7 @@ package com.express.grocery.Express.Grocery.service.implementation;
 import com.express.grocery.Express.Grocery.config.AppConstants;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateCouponRequest;
 import com.express.grocery.Express.Grocery.dto.request.AssignCouponRequest;
-import com.express.grocery.Express.Grocery.dto.response.AddUpdateCouponResponse;
-import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
-import com.express.grocery.Express.Grocery.dto.response.AssignCouponResponse;
-import com.express.grocery.Express.Grocery.dto.response.UserRegisterResponse;
+import com.express.grocery.Express.Grocery.dto.response.*;
 import com.express.grocery.Express.Grocery.entity.Coupon;
 import com.express.grocery.Express.Grocery.entity.User;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 @Service
 public class CouponServiceImpl implements CouponService {
@@ -69,5 +67,10 @@ public class CouponServiceImpl implements CouponService {
         }
 
         return new AssignCouponResponse(modelMapper.map(user, UserRegisterResponse.class), modelMapper.map(coupon, AddUpdateCouponResponse.class));
+    }
+
+    @Override
+    public List<ListCartDetailsResponse> listCoupons(String userUuid) {
+        return List.of();
     }
 }

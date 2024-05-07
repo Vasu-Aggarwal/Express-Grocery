@@ -2,6 +2,7 @@ package com.express.grocery.Express.Grocery.controller;
 
 import com.express.grocery.Express.Grocery.dto.request.AddToCartRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddToCartResponse;
+import com.express.grocery.Express.Grocery.dto.response.ListCartDetailsResponse;
 import com.express.grocery.Express.Grocery.service.CartDetailService;
 import com.express.grocery.Express.Grocery.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class CartDetailController {
     }
 
     @GetMapping("/getCartDetails/{userUuid}")
-    public ResponseEntity<List<AddToCartResponse>> getCartDetails(@PathVariable String userUuid){
-        List<AddToCartResponse> addToCartResponses = cartService.getCartDetails(userUuid);
-        return new ResponseEntity<>(addToCartResponses, HttpStatus.CREATED);
+    public ResponseEntity<ListCartDetailsResponse> getCartDetails(@PathVariable String userUuid){
+        ListCartDetailsResponse listCartDetailsResponse = cartService.getCartDetails(userUuid);
+        return new ResponseEntity<>(listCartDetailsResponse, HttpStatus.CREATED);
     }
 
 }

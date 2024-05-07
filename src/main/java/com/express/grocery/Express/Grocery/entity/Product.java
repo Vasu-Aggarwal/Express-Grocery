@@ -28,7 +28,7 @@ public class Product {
     private Double productPrice;
     @Column(name = "in_stock_quantity")
     private Integer inStockQuantity;
-    @Column(name = "product_name")
+    @Column(name = "product_name", unique = true)
     private String productName;
     @Column(name = "is_available")
     private Boolean isAvailable;

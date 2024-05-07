@@ -24,5 +24,7 @@ public class AddUpdateProductResponse {
     private String productImg;
     private UserRegisterResponse addedBy;
     private Timestamp addedOn;
-    private List<CategoryInfoResponse> categories;
+    private List<CategoryDto> categories;
+    private Integer discountOnCategory;
+    private Double productDiscountedPrice;
 }

@@ -1,5 +1,6 @@
 package com.express.grocery.Express.Grocery.service.implementation;
 
+import com.express.grocery.Express.Grocery.dto.CategoryDto;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateProductRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
 import com.express.grocery.Express.Grocery.entity.Category;
@@ -18,8 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,8 +56,11 @@ public class ProductServiceImpl implements ProductService {
             oldProduct.setInStockQuantity(addUpdateProductRequest.getInStockQuantity());
             oldProduct.setIsAvailable(addUpdateProductRequest.getIsAvailable());
             oldProduct.setCategories(categories);
-
-            return modelMapper.map(productRepository.save(oldProduct), AddUpdateProductResponse.class);
+            Product saveProduct = productRepository.save(oldProduct);
+            //Apply category discount if any
+            AddUpdateProductResponse productResponse = modelMapper.map(saveProduct, AddUpdateProductResponse.class);
+            productDiscountHelper(productResponse);
+            return productResponse;
         }
 
         //Add new product
@@ -69,7 +72,10 @@ public class ProductServiceImpl implements ProductService {
             List<Category> categories = categoryRepository.findAllByCategoryNameIn(addUpdateProductRequest.getCategories());
             product.setCategories(categories);
             product.setAddedBy(added_by);
-            return modelMapper.map(productRepository.save(product), AddUpdateProductResponse.class);
+            Product saveProduct = productRepository.save(product);
+            AddUpdateProductResponse productResponse = modelMapper.map(saveProduct, AddUpdateProductResponse.class);
+            productDiscountHelper(productResponse);
+            return productResponse;
         }
     }
 
@@ -118,21 +124,43 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<AddUpdateProductResponse> allProductList() {
         List<Product> products = productRepository.findAll();
-        return products.stream()
+
+        List<AddUpdateProductResponse> productResponses = products.stream()
                 .map((product)-> modelMapper.map(product, AddUpdateProductResponse.class))
                 .collect(Collectors.toList());
+
+        //Get category discount of each product
+        for (AddUpdateProductResponse product: productResponses){
+            productDiscountHelper(product);
+        }
+
+        return productResponses;
+    }
+
+    public void productDiscountHelper(AddUpdateProductResponse product){
+        List<CategoryDto> applicableDiscountedCategories = product.getCategories().stream().filter(CategoryDto::getIsCoupon).collect(Collectors.toList());
+        Optional<CategoryDto> maxDiscountCategory = applicableDiscountedCategories.stream().max(Comparator.comparingDouble(cat-> cat.getCoupon().getDiscountPercent()));
+        maxDiscountCategory.ifPresent(categoryDto -> {
+            double discountAmount = product.getProductPrice() - (product.getProductPrice() * ((double) (categoryDto.getCoupon().getDiscountPercent()) /100));
+            product.setDiscountOnCategory(categoryDto.getCoupon().getDiscountPercent());
+            product.setProductDiscountedPrice(discountAmount);
+        });
     }
 
     @Override
     public AddUpdateProductResponse getProductById(Integer product_id) {
         Product product = productRepository.findById(product_id).orElseThrow(()-> new ResourceNotFoundException(String.format("Product with id: %s not found", product_id), 0));
-        return modelMapper.map(product, AddUpdateProductResponse.class);
+        AddUpdateProductResponse productResponse = modelMapper.map(product, AddUpdateProductResponse.class);
+        productDiscountHelper(productResponse);
+        return productResponse;
     }
 
     @Override
     public AddUpdateProductResponse getProductByName(String productName) {
         Product product = productRepository.findByProductNameContainingIgnoreCase(productName).orElseThrow(()-> new ResourceNotFoundException(String.format("Product not found: %s", productName), 0));
-        return modelMapper.map(product, AddUpdateProductResponse.class);
+        AddUpdateProductResponse productResponse = modelMapper.map(product, AddUpdateProductResponse.class);
+        productDiscountHelper(productResponse);
+        return productResponse;
     }
 
 }
