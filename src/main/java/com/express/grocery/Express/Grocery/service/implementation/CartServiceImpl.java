@@ -59,14 +59,31 @@ public class CartServiceImpl implements CartService {
         listCartDetailsResponse.setTotalProducts(cartDetails.size());
 
         //Calculate the total amount
-        double totalAmount = cartDetails.stream().mapToDouble(cartDetail -> cartDetail.getProductAmount()).sum();
+        double totalAmount = cartDetails.stream().mapToDouble(AddToCartResponse::getProductAmount).sum();
 
         //Calculate the total discount amount
-        double discountAmount = cartDetails.stream().mapToDouble(cartDetail -> cartDetail.getProductDiscountedAmount()).sum();
+        double discountAmount = cartDetails.stream().mapToDouble(AddToCartResponse::getProductDiscountedAmount).sum();
 
         listCartDetailsResponse.setBeforeDiscount(totalAmount);
         listCartDetailsResponse.setAfterDiscount(discountAmount);
         listCartDetailsResponse.setSavedAmount(totalAmount-discountAmount);
+
+        /*
+        Find the discount amount after applying coupon:
+            if discountPercent of cart value >= then apply maxDiscountAmount
+        */
+
+        //If additionally user has applied any coupon then reduce the afterDiscountAmount and increase the savedAmount
+        Coupon coupon = couponRepository.findByCouponName(cart.getCoupon().getCouponName()).orElseThrow(()-> new ResourceNotFoundException((String.format("Coupon with name: %s not found", cart.getCoupon().getCouponName())), 0));
+
+        double cartDiscountAfterCoupon = listCartDetailsResponse.getAfterDiscount()*(coupon.getDiscountPercent().doubleValue()/100);
+        if (cartDiscountAfterCoupon >= coupon.getMaxDiscount()){
+            listCartDetailsResponse.setAfterDiscount(discountAmount-coupon.getMaxDiscount());
+            listCartDetailsResponse.setSavedAmount((totalAmount-discountAmount) + coupon.getMaxDiscount());
+        } else {
+            listCartDetailsResponse.setAfterDiscount(listCartDetailsResponse.getAfterDiscount() - cartDiscountAfterCoupon);
+            listCartDetailsResponse.setSavedAmount((totalAmount-discountAmount) + cartDiscountAfterCoupon);
+        }
 
         //Then show the cart details of that cart
         return listCartDetailsResponse;

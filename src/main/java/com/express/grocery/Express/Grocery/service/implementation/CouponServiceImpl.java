@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CouponServiceImpl implements CouponService {
@@ -102,9 +103,41 @@ public class CouponServiceImpl implements CouponService {
         Coupon coupon = couponRepository.findByCouponName(applyCouponRequest.getCouponName()).orElseThrow(()-> new ResourceNotFoundException((String.format("Coupon with name: %s not found", applyCouponRequest.getCouponName())), 0));
 
         Cart cart = cartRepository.findById(applyCouponRequest.getCartId()).orElseThrow(()-> new BadRequestException("Bad request"));
-        cart.setCouponApplied(true);
-        cart.setCoupon(coupon);
-        cartRepository.save(cart);
-        return new ApplyCouponResponse("Coupon Applied successfully", 1);
+
+        List<AddToCartResponse> cartDetails = cart.getCartDetails().stream().map((cartDetail)-> modelMapper.map(cartDetail, AddToCartResponse.class)).collect(Collectors.toList());
+
+        for (AddToCartResponse cartResponse: cartDetails){
+            AddUpdateProductResponse productResponse = cartResponse.getProduct();
+            ProductServiceImpl.productDiscountHelper(productResponse);
+            cartResponse.setProductAmount(cartResponse.getProductQuantity()*productResponse.getProductPrice());
+            cartResponse.setProductDiscountedAmount(cartResponse.getProductQuantity()*productResponse.getProductDiscountedPrice());
+        }
+        ListCartDetailsResponse listCartDetailsResponse = new ListCartDetailsResponse();
+
+        listCartDetailsResponse.setProductDetail(cartDetails);
+        listCartDetailsResponse.setTotalProducts(cartDetails.size());
+
+        //Calculate the total amount
+        double totalAmount = cartDetails.stream().mapToDouble(cartDetail -> cartDetail.getProductAmount()).sum();
+
+        //Calculate the total discount amount
+        double discountAmount = cartDetails.stream().mapToDouble(cartDetail -> cartDetail.getProductDiscountedAmount()).sum();
+
+        listCartDetailsResponse.setBeforeDiscount(totalAmount);
+        listCartDetailsResponse.setAfterDiscount(discountAmount);
+        listCartDetailsResponse.setSavedAmount(totalAmount-discountAmount);
+
+        /*
+            1. Check the cart value: if cart value >= minimumCartValue of coupon then apply
+        */
+
+        if (listCartDetailsResponse.getBeforeDiscount() < coupon.getMinimumCartValue()){
+            return new ApplyCouponResponse(String.format("Please add Rs.$s worth products to avail this coupon", (coupon.getMinimumCartValue()-listCartDetailsResponse.getBeforeDiscount())), 0);
+        } else {
+            cart.setCouponApplied(true);
+            cart.setCoupon(coupon);
+            cartRepository.save(cart);
+            return new ApplyCouponResponse("Coupon Applied successfully", 1);
+        }
     }
 }

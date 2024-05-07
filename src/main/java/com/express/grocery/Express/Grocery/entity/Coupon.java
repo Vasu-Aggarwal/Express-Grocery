@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "coupon")
+@ToString
 @EntityListeners(AuditingEntityListener.class)
 public class Coupon {
 
