@@ -1,8 +1,10 @@
 package com.express.grocery.Express.Grocery.controller;
 
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateCouponRequest;
+import com.express.grocery.Express.Grocery.dto.request.ApplyCouponRequest;
 import com.express.grocery.Express.Grocery.dto.request.AssignCouponRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateCouponResponse;
+import com.express.grocery.Express.Grocery.dto.response.ApplyCouponResponse;
 import com.express.grocery.Express.Grocery.dto.response.AssignCouponResponse;
 import com.express.grocery.Express.Grocery.dto.response.ListCouponsResponse;
 import com.express.grocery.Express.Grocery.service.CouponService;
@@ -38,6 +40,12 @@ public class CouponController {
     public ResponseEntity<List<ListCouponsResponse>> listCoupons(@PathVariable String userUuid){
         List<ListCouponsResponse> listCouponsResponses = couponService.listCoupons(userUuid);
         return new ResponseEntity<>(listCouponsResponses, HttpStatus.OK);
+    }
+
+    @PostMapping("/applyCoupon")
+    public ResponseEntity<ApplyCouponResponse> assignCoupon(@RequestBody @Valid ApplyCouponRequest applyCouponRequest){
+        ApplyCouponResponse response = couponService.applyCoupon(applyCouponRequest);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

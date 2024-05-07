@@ -3,11 +3,15 @@ package com.express.grocery.Express.Grocery.service.implementation;
 import com.express.grocery.Express.Grocery.config.AppConstants;
 import com.express.grocery.Express.Grocery.config.CouponType;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateCouponRequest;
+import com.express.grocery.Express.Grocery.dto.request.ApplyCouponRequest;
 import com.express.grocery.Express.Grocery.dto.request.AssignCouponRequest;
 import com.express.grocery.Express.Grocery.dto.response.*;
+import com.express.grocery.Express.Grocery.entity.Cart;
 import com.express.grocery.Express.Grocery.entity.Coupon;
 import com.express.grocery.Express.Grocery.entity.User;
+import com.express.grocery.Express.Grocery.exception.BadRequestException;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
+import com.express.grocery.Express.Grocery.repository.CartRepository;
 import com.express.grocery.Express.Grocery.repository.CouponRepository;
 import com.express.grocery.Express.Grocery.repository.UserRepository;
 import com.express.grocery.Express.Grocery.service.CouponService;
@@ -32,6 +36,9 @@ public class CouponServiceImpl implements CouponService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
 
     @Override
     public AddUpdateCouponResponse addUpdateCoupon(AddUpdateCouponRequest addUpdateCouponRequest) {
@@ -88,5 +95,16 @@ public class CouponServiceImpl implements CouponService {
             couponList.add(modelMapper.map(coupon, ListCouponsResponse.class));
         }
         return couponList;
+    }
+
+    @Override
+    public ApplyCouponResponse applyCoupon(ApplyCouponRequest applyCouponRequest) {
+        Coupon coupon = couponRepository.findByCouponName(applyCouponRequest.getCouponName()).orElseThrow(()-> new ResourceNotFoundException((String.format("Coupon with name: %s not found", applyCouponRequest.getCouponName())), 0));
+
+        Cart cart = cartRepository.findById(applyCouponRequest.getCartId()).orElseThrow(()-> new BadRequestException("Bad request"));
+        cart.setCouponApplied(true);
+        cart.setCoupon(coupon);
+        cartRepository.save(cart);
+        return new ApplyCouponResponse("Coupon Applied successfully", 1);
     }
 }
