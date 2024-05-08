@@ -43,6 +43,10 @@ public class Invoice {
     @JoinColumn(name = "order_id", nullable = false, unique = true)
     private Order order_Id;
 
+    @OneToOne
+    @JoinColumn(name = "transaction_id", nullable = false, unique = true)
+    private Transaction transaction_id;
+
     @OneToOne(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private InvoiceParticular inp;
 

@@ -43,6 +43,9 @@ public class Order {
     @OneToOne(mappedBy = "order_Id", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Invoice invoice;
 
+    @OneToOne(mappedBy = "order_id", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Transaction transaction;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "products_ordered", joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "order_id"), inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "product_id"))
     private List<Product> products = new ArrayList<>();
