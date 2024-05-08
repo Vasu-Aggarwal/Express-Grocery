@@ -26,11 +26,11 @@ public class CartDetail {
     private Integer productQuantity;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false, unique = true)
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
     @CreationTimestamp

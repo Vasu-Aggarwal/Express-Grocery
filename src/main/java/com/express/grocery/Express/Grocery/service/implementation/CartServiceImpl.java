@@ -60,7 +60,7 @@ public class CartServiceImpl implements CartService {
         //Calculate the total amount
         double totalAmount = cartDetails.stream().mapToDouble(AddToCartResponse::getProductAmount).sum();
 
-        //Calculate the total discount amount
+        //Calculate the total discount amount: category discount
         double discountAmount = cartDetails.stream().mapToDouble(AddToCartResponse::getProductDiscountedAmount).sum();
 
         listCartDetailsResponse.setBeforeDiscount(totalAmount);
@@ -73,15 +73,17 @@ public class CartServiceImpl implements CartService {
         */
 
         //If additionally user has applied any coupon then reduce the afterDiscountAmount and increase the savedAmount
-        Coupon coupon = couponRepository.findByCouponName(cart.getCoupon().getCouponName()).orElseThrow(()-> new ResourceNotFoundException((String.format("Coupon with name: %s not found", cart.getCoupon().getCouponName())), 0));
+        if (cart.getCouponApplied()) {
+            Coupon coupon = couponRepository.findByCouponName(cart.getCoupon().getCouponName()).orElseThrow(() -> new ResourceNotFoundException((String.format("Coupon with name: %s not found", cart.getCoupon().getCouponName())), 0));
 
-        double cartDiscountAfterCoupon = listCartDetailsResponse.getAfterDiscount()*(coupon.getDiscountPercent().doubleValue()/100);
-        if (cartDiscountAfterCoupon >= coupon.getMaxDiscount()){
-            listCartDetailsResponse.setAfterDiscount(discountAmount-coupon.getMaxDiscount());
-            listCartDetailsResponse.setSavedAmount((totalAmount-discountAmount) + coupon.getMaxDiscount());
-        } else {
-            listCartDetailsResponse.setAfterDiscount(listCartDetailsResponse.getAfterDiscount() - cartDiscountAfterCoupon);
-            listCartDetailsResponse.setSavedAmount((totalAmount-discountAmount) + cartDiscountAfterCoupon);
+            double cartDiscountAfterCoupon = listCartDetailsResponse.getAfterDiscount() * (coupon.getDiscountPercent().doubleValue() / 100);
+            if (cartDiscountAfterCoupon >= coupon.getMaxDiscount()) {
+                listCartDetailsResponse.setAfterDiscount(discountAmount - coupon.getMaxDiscount());
+                listCartDetailsResponse.setSavedAmount((totalAmount - discountAmount) + coupon.getMaxDiscount());
+            } else {
+                listCartDetailsResponse.setAfterDiscount(listCartDetailsResponse.getAfterDiscount() - cartDiscountAfterCoupon);
+                listCartDetailsResponse.setSavedAmount((totalAmount - discountAmount) + cartDiscountAfterCoupon);
+            }
         }
 
         //Then show the cart details of that cart

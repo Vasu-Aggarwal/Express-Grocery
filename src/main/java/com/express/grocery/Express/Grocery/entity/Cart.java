@@ -24,7 +24,7 @@ public class Cart {
     @Column(name = "cart_id")
     private Integer cartId;
 
-    @Column(name = "coupon_applied")
+    @Column(name = "coupon_applied", nullable = false)
     private Boolean couponApplied;
 
     @OneToOne

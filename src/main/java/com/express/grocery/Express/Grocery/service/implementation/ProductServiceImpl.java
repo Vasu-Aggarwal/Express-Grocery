@@ -140,10 +140,13 @@ public class ProductServiceImpl implements ProductService {
     public static void productDiscountHelper(AddUpdateProductResponse product){
         List<CategoryDto> applicableDiscountedCategories = product.getCategories().stream().filter(CategoryDto::getIsCoupon).collect(Collectors.toList());
         Optional<CategoryDto> maxDiscountCategory = applicableDiscountedCategories.stream().max(Comparator.comparingDouble(cat-> cat.getCoupon().getDiscountPercent()));
-        maxDiscountCategory.ifPresent(categoryDto -> {
+        maxDiscountCategory.ifPresentOrElse(categoryDto -> {
             double discountAmount = product.getProductPrice() - (product.getProductPrice() * ((double) (categoryDto.getCoupon().getDiscountPercent()) /100));
             product.setDiscountOnCategory(categoryDto.getCoupon().getDiscountPercent());
             product.setProductDiscountedPrice(discountAmount);
+        }, () -> {
+            product.setDiscountOnCategory(0);
+            product.setProductDiscountedPrice(product.getProductPrice());
         });
     }
 

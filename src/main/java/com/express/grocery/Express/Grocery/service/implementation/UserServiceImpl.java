@@ -36,6 +36,7 @@ public class UserServiceImpl implements UserService {
         //When user is created, create a new cart for this user to add the products
         Cart cart = new Cart();
         cart.setUser(savedUser);
+        cart.setCouponApplied(false);
         cartRepository.save(cart);
         return modelMapper.map(savedUser, UserRegisterResponse.class);
     }

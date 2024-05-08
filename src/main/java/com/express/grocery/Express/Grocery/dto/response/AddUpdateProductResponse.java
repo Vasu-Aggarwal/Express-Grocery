@@ -3,6 +3,7 @@ package com.express.grocery.Express.Grocery.dto.response;
 import com.express.grocery.Express.Grocery.dto.CategoryDto;
 import com.express.grocery.Express.Grocery.entity.Category;
 import com.express.grocery.Express.Grocery.entity.User;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
