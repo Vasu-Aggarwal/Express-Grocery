@@ -30,12 +30,10 @@ public class Transaction {
     private Double transactionAmount;
 
     @Column(name = "transaction_status", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
-    private AppConstants transactionStatus;
+    private Integer transactionStatus;
 
     @Column(name = "transaction_mode", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
-    private AppConstants transactionMode;
+    private Integer transactionMode;
 
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false, unique = true)

@@ -18,7 +18,7 @@ public class NewTransactionResponse {
     private Double transactionAmount;
     private Integer transactionStatus;
     private Integer transactionMode;
-    private Order order_id;
+    private OrderCheckoutResponse order_id;
     private LocalDateTime addedOn;
 
 }

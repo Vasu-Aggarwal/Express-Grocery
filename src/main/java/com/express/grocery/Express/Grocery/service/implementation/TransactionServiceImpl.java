@@ -5,6 +5,7 @@ import com.express.grocery.Express.Grocery.dto.request.NewTransactionRequest;
 import com.express.grocery.Express.Grocery.dto.response.NewTransactionResponse;
 import com.express.grocery.Express.Grocery.entity.Order;
 import com.express.grocery.Express.Grocery.entity.Transaction;
+import com.express.grocery.Express.Grocery.exception.BadRequestException;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
 import com.express.grocery.Express.Grocery.repository.OrderRepository;
 import com.express.grocery.Express.Grocery.repository.TransactionRepository;
@@ -30,9 +31,21 @@ public class TransactionServiceImpl implements TransactionService {
     public NewTransactionResponse newTransaction(NewTransactionRequest newTransactionRequest) {
         Order order = orderRepository.findById(newTransactionRequest.getOrder_id()).orElseThrow(() -> new ResourceNotFoundException("Order not found", 0));
 
+
+        if (order.getOrderStatus() == AppConstants.ORDER_IN_TRANSACT.getValue()){
+            if (newTransactionRequest.getTransactionId() == null){
+                throw new BadRequestException("Your order is in transaction, please pass proper transaction details");
+            }
+        }
+
         Transaction transaction = modelMapper.map(newTransactionRequest, Transaction.class);
+        if (order.getOrderStatus() == AppConstants.ORDER_IN_TRANSACT.getValue()){
+            transaction.setTransactionId(newTransactionRequest.getTransactionId());
+        }
+        transaction.setTransactionMode(newTransactionRequest.getTransactionMode());
+        transaction.setTransactionStatus(newTransactionRequest.getTransactionStatus());
+        transaction.setOrder_id(order);
 
-        transaction.setTransactionMode(AppConstants.);
-
+        return modelMapper.map(transactionRepository.save(transaction), NewTransactionResponse.class);
     }
 }
