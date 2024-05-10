@@ -4,10 +4,7 @@ import com.express.grocery.Express.Grocery.config.AppConstants;
 import com.express.grocery.Express.Grocery.dto.request.OrderCheckoutRequest;
 import com.express.grocery.Express.Grocery.dto.request.UpdateOrderStatusRequest;
 import com.express.grocery.Express.Grocery.dto.response.OrderCheckoutResponse;
-import com.express.grocery.Express.Grocery.entity.Coupon;
-import com.express.grocery.Express.Grocery.entity.Order;
-import com.express.grocery.Express.Grocery.entity.Transaction;
-import com.express.grocery.Express.Grocery.entity.User;
+import com.express.grocery.Express.Grocery.entity.*;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
 import com.express.grocery.Express.Grocery.repository.CouponRepository;
 import com.express.grocery.Express.Grocery.repository.OrderRepository;
@@ -19,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -47,11 +46,25 @@ public class OrderServiceImpl implements OrderService {
         //find user with user uuid present in request
         User user = userRepository.findById(orderCheckoutRequest.getUser()).orElseThrow(() -> new ResourceNotFoundException(String.format("User with uuid: %s not found", orderCheckoutRequest.getUser()), 0));
 
+        //find the cart id from user
+        Cart cart = user.getCart();
+
+        //find the cart details
+        List<CartDetail> cartDetail = cart.getCartDetails();
+
         //if user found then set the user
         order.setUser(user);
 
+        //add products that are being ordered
+        List<Product> products = cartDetail.stream().map(CartDetail::getProduct).collect(Collectors.toList());
+        order.setProducts(products);
+
+        //Link cart to the order
+        order.setCartId(cart);
+
         //check if coupon is null or not
         Order newOrder;
+
         if (orderCheckoutRequest.getCoupon() == null || orderCheckoutRequest.getCoupon().isEmpty() || orderCheckoutRequest.getCoupon().isBlank()){
             newOrder = orderRepository.save(order);
         } else {

@@ -1,5 +1,9 @@
 package com.express.grocery.Express.Grocery.util;
 
+import com.express.grocery.Express.Grocery.entity.CartDetail;
+import com.express.grocery.Express.Grocery.entity.Invoice;
+import com.express.grocery.Express.Grocery.entity.InvoiceParticular;
+import com.express.grocery.Express.Grocery.entity.Product;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
@@ -16,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 public class InvoicePdfGenerator {
     private static final Logger logger = LoggerFactory.getLogger(InvoicePdfGenerator.class);
@@ -24,7 +29,7 @@ public class InvoicePdfGenerator {
     private static final String[] teens = {"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
     private static final String[] tens = {"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
 
-    public static ByteArrayInputStream invoiceGenerator() {
+    public static ByteArrayInputStream invoiceGenerator(Invoice invoice, InvoiceParticular invoiceParticular, List<CartDetail> products) {
         logger.info("PDF is being generated...\n");
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
@@ -66,9 +71,9 @@ public class InvoicePdfGenerator {
         gstin.add(new Chunk("\nPAN: ", headerFont));
         gstin.add(new Chunk("DGUPA0170", textFont));
         gstin.add(new Chunk("\nInvoice Number: ", headerFont));
-        gstin.add(new Chunk("test invoice 01", textFont));
+        gstin.add(new Chunk(invoice.getInvoiceNumber(), textFont));
         gstin.add(new Chunk("\nInvoice Date: ", headerFont));
-        gstin.add(new Chunk("10 May, 2024", textFont));
+        gstin.add(new Chunk(invoice.getInvoiceDate().toString(), textFont));
         PdfPCell companyFinancialDetails = new PdfPCell();
         companyFinancialDetails.setPadding(5);
         companyFinancialDetails.addElement(gstin);
@@ -77,9 +82,9 @@ public class InvoicePdfGenerator {
         Phrase order = new Phrase();
         order.setLeading(10);
         order.add(new Chunk("Order ID: ", headerFont));
-        order.add(new Chunk("order test 01", textFont));
+        order.add(new Chunk(invoice.getOrder_Id().getOrderId().toString(), textFont));
         order.add(new Chunk("\nMode of Payment: ", headerFont));
-        order.add(new Chunk("Cash", textFont));
+        order.add(new Chunk(invoice.getTransaction_id().getTransactionMode().toString(), textFont));
         PdfPCell companyOrder = new PdfPCell();
         companyOrder.addElement(order);
         companyOrder.setColspan(7);
@@ -110,24 +115,24 @@ public class InvoicePdfGenerator {
         Phrase receiverDetails = new Phrase();
         receiverDetails.setLeading(10);
         receiverDetails.add(new Chunk("Name: ", headerFont));
-        receiverDetails.add(new Chunk("Vasu Aggarwal", textFont));
+        receiverDetails.add(new Chunk(invoice.getOrder_Id().getUser().getName(), textFont));
         receiverDetails.add(new Chunk("\nAddress: ", headerFont));
-        receiverDetails.add(new Chunk("Bhola nath nagar, Shahdara-110032", textFont));
+        receiverDetails.add(new Chunk(invoice.getBillingAddress(), textFont));
         receiverDetails.add(new Chunk("\nEmail: ", headerFont));
-        receiverDetails.add(new Chunk("vasuji378@gmail.com", textFont));
+        receiverDetails.add(new Chunk(invoice.getOrder_Id().getUser().getEmail(), textFont));
         receiverDetails.add(new Chunk("\nContact: ", headerFont));
-        receiverDetails.add(new Chunk("+91-8368121537", textFont));
+        receiverDetails.add(new Chunk(invoice.getBillingContact().toString(), textFont));
 
         Phrase consigneeDetails = new Phrase();
         consigneeDetails.setLeading(10);
         consigneeDetails.add(new Chunk("Name: ", headerFont));
-        consigneeDetails.add(new Chunk("Vasu Aggarwal", textFont));
+        consigneeDetails.add(new Chunk(invoice.getOrder_Id().getUser().getName(), textFont));
         consigneeDetails.add(new Chunk("\nAddress: ", headerFont));
-        consigneeDetails.add(new Chunk("Bhola nath nagar, Shahdara-110032", textFont));
+        consigneeDetails.add(new Chunk(invoice.getShippingAddress(), textFont));
         consigneeDetails.add(new Chunk("\nEmail: ", headerFont));
-        consigneeDetails.add(new Chunk("vasuji378@gmail.com", textFont));
+        consigneeDetails.add(new Chunk(invoice.getOrder_Id().getUser().getEmail(), textFont));
         consigneeDetails.add(new Chunk("\nContact: ", headerFont));
-        consigneeDetails.add(new Chunk("+91-8368121537", textFont));
+        consigneeDetails.add(new Chunk(invoice.getBillingContact().toString(), textFont));
 
         PdfPCell receiverCol = new PdfPCell();
         receiverCol.addElement(receiverDetails);
@@ -196,17 +201,34 @@ public class InvoicePdfGenerator {
             table.addCell(header);
         }
 
-        String[] bogusData = {"1", "123456", "Test product", "1", "100.00", "0.00", "100.00", "-", "-", "-", "-", "18.0%", "18.0", "118.00"};
-
-        for (int i=0;i<2;i++){
-            for (String bogusDatum : bogusData) {
-                Phrase phrase = new Phrase(bogusDatum, textFont);
-                PdfPCell cell = new PdfPCell(phrase);
-                cell.setPadding(5);
-                cell.setFixedHeight(70);
-                table.addCell(cell);
-            }
+        int sno = 1;
+        for (CartDetail cartDetail: products){
+            table.addCell(createCell(Integer.toString(sno), textFont));
+            table.addCell(createCell(cartDetail.getProduct().getProductId().toString(), textFont));
+            table.addCell(createCell(cartDetail.getProduct().getProductName(), textFont));
+            table.addCell(createCell(cartDetail.getProductQuantity().toString(), textFont));
+            table.addCell(createCell(cartDetail.getProduct().getProductPrice().toString(), textFont));
+            table.addCell(createCell(cartDetail.getProduct().getProductPrice().toString(), textFont));
+            table.addCell(createCell(invoiceParticular.getGstAmount().toString(), textFont));
+            table.addCell(createCell("-", textFont));
+            table.addCell(createCell("-", textFont));
+            table.addCell(createCell("-", textFont));
+            table.addCell(createCell("-", textFont));
+            table.addCell(createCell("-", textFont));
+            table.addCell(createCell("-", textFont));
+            table.addCell(createCell(cartDetail.getProduct().getProductPrice().toString(), textFont));
+            sno++;
         }
+
+//        for (int i=0;i<2;i++){
+//            for (String bogusDatum : productData) {
+//                Phrase phrase = new Phrase(bogusDatum, textFont);
+//                PdfPCell cell = new PdfPCell(phrase);
+//                cell.setPadding(5);
+//                cell.setFixedHeight(70);
+//                table.addCell(cell);
+//            }
+//        }
 
         //Net invoice
         Phrase netInvoice = new Phrase();
@@ -226,12 +248,12 @@ public class InvoicePdfGenerator {
         table.addCell(netInvoiceAmountCol);
 
         //Invoice in words
-        Phrase invoice = new Phrase();
-        invoice.add(new Chunk("Invoice Value (In words): ", headerFont));
-        invoice.add(new Chunk(convertNumberToWords(118)+" Only", textFont));
+        Phrase invoicePhrase = new Phrase();
+        invoicePhrase.add(new Chunk("Invoice Value (In words): ", headerFont));
+        invoicePhrase.add(new Chunk(convertNumberToWords(118)+" Only", textFont));
         PdfPCell invoiceCol = new PdfPCell();
         invoiceCol.setPadding(5);
-        invoiceCol.addElement(invoice);
+        invoiceCol.addElement(invoicePhrase);
         invoiceCol.setColspan(14);
         table.addCell(invoiceCol);
 
@@ -244,6 +266,14 @@ public class InvoicePdfGenerator {
         document.add(table);
         document.close();
         return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+    }
+
+    public static PdfPCell createCell(String text, Font font) {
+        Phrase phrase = new Phrase(text, font);
+        PdfPCell cell = new PdfPCell(phrase);
+        cell.setPadding(5);
+        cell.setFixedHeight(70);
+        return cell;
     }
 
     public static String convertNumberToWords(int number) {

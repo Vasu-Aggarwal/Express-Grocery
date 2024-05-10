@@ -2,27 +2,25 @@ package com.express.grocery.Express.Grocery.service.implementation;
 
 import com.express.grocery.Express.Grocery.config.AppConstants;
 import com.express.grocery.Express.Grocery.dto.request.AddInvoiceRequest;
-import com.express.grocery.Express.Grocery.dto.request.GenerateInvoiceRequest;
-import com.express.grocery.Express.Grocery.dto.response.GenerateInvoiceResponse;
-import com.express.grocery.Express.Grocery.entity.Invoice;
-import com.express.grocery.Express.Grocery.entity.InvoiceParticular;
-import com.express.grocery.Express.Grocery.entity.Order;
-import com.express.grocery.Express.Grocery.entity.Transaction;
+import com.express.grocery.Express.Grocery.entity.*;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
 import com.express.grocery.Express.Grocery.repository.InvoiceParticularRepository;
 import com.express.grocery.Express.Grocery.repository.InvoiceRepository;
 import com.express.grocery.Express.Grocery.repository.OrderRepository;
 import com.express.grocery.Express.Grocery.repository.TransactionRepository;
 import com.express.grocery.Express.Grocery.service.InvoiceService;
+import com.express.grocery.Express.Grocery.util.InvoicePdfGenerator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -67,6 +65,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceParticular.setGstRate(0.18);
             invoiceParticular.setBasicAmount(order.getOrderAmount());
             invoiceParticular.setGstAmount(order.getOrderAmount()*0.18);
+            invoiceParticular.setTotalAmount(order.getOrderAmount()+(order.getOrderAmount()*0.18));
 
             invoiceParticularRepository.save(invoiceParticular);
 
@@ -81,7 +80,21 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public GenerateInvoiceResponse generateInvoice(GenerateInvoiceRequest generateInvoiceRequest) {
-        return null;
+    public ByteArrayInputStream generateInvoice(String invoiceNumber) {
+        //Find invoice from invoice number
+        Invoice invoice = invoiceRepository.findByInvoiceNumberIgnoreCase(invoiceNumber);
+        //Find order
+        Order order = invoice.getOrder_Id();
+        //Find cart
+        Cart cart = order.getCartId();
+        //Find cart details
+        List<CartDetail> cartDetail = cart.getCartDetails();
+        //Find products
+        List<Product> products = cartDetail.stream().map(CartDetail::getProduct).collect(Collectors.toList());
+
+        //Find invoice particulars from the invoice id
+        InvoiceParticular invoiceParticular = invoice.getInp();
+
+        return InvoicePdfGenerator.invoiceGenerator(invoice, invoiceParticular, cartDetail);
     }
 }

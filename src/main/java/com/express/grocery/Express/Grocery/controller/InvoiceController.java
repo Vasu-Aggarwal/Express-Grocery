@@ -31,16 +31,17 @@ public class InvoiceController {
     }
 
     @GetMapping("/generateInvoice")
-    public ResponseEntity<InputStreamResource> generateInvoice()  {
-        ByteArrayInputStream pdf = InvoicePdfGenerator.invoiceGenerator();
+    public ResponseEntity<InputStreamResource> generateInvoice(@RequestParam(value = "invoiceNumber") String invoiceNumber)  {
         HttpHeaders httpHeaders = new HttpHeaders();
         String filename = String.valueOf(Instant.now().toEpochMilli());
         httpHeaders.add("Content-Disposition", "inline;file="+filename+".pdf");
+        ByteArrayInputStream file = invoiceService.generateInvoice(invoiceNumber);
+        InputStreamResource resource = new InputStreamResource(file);
 
         return ResponseEntity.ok()
                 .headers(httpHeaders)
                 .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(pdf));
+                .body(resource);
     }
 
 }

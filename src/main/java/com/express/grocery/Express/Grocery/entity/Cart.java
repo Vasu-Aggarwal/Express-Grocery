@@ -35,6 +35,9 @@ public class Cart {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
+    @OneToMany(mappedBy = "cartId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Order> order;
+
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<CartDetail> cartDetails;
 

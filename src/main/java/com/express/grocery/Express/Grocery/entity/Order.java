@@ -37,6 +37,10 @@ public class Order {
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cartId;
+
+    @ManyToOne
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
