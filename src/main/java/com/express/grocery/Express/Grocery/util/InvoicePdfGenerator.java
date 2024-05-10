@@ -28,7 +28,7 @@ public class InvoicePdfGenerator {
         logger.info("PDF is being generated...\n");
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
-        PdfWriter writer = PdfWriter.getInstance(document, byteArrayOutputStream);
+        PdfWriter.getInstance(document, byteArrayOutputStream);
         document.open();
 
         //Default font
@@ -38,11 +38,11 @@ public class InvoicePdfGenerator {
         //Main table
         PdfPTable table = new PdfPTable(14);
         table.setWidthPercentage(100);
-        table.getDefaultCell().setPadding(5);
 
         //Table heading
         PdfPCell heading = new PdfPCell(new Paragraph("TAX INVOICE", headerFont));
         heading.setGrayFill(0.8f);
+        heading.setPadding(5);
         heading.setFixedHeight(20);
         heading.setHorizontalAlignment(Element.ALIGN_CENTER);
         heading.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -50,8 +50,13 @@ public class InvoicePdfGenerator {
         table.addCell(heading);
 
         //Company name and address details
-        PdfPCell companyDetails = new PdfPCell(new Paragraph("Express Grocery Pvt. Ltd.\nBhola nath nagar, Shahdara,\nDelhi - 110032 ", textFont));
+        Phrase company = new Phrase();
+        company.setLeading(10);
+        company.add(new Chunk("Express Grocery Pvt. Ltd.\nBhola nath nagar, Shahdara,\nDelhi - 110032", textFont));
+        PdfPCell companyDetails = new PdfPCell();
         companyDetails.setColspan(14);
+        companyDetails.setPadding(5);
+        companyDetails.addElement(company);
 
         //Company GST Details and Order details
         Phrase gstin = new Phrase();
@@ -65,6 +70,7 @@ public class InvoicePdfGenerator {
         gstin.add(new Chunk("\nInvoice Date: ", headerFont));
         gstin.add(new Chunk("10 May, 2024", textFont));
         PdfPCell companyFinancialDetails = new PdfPCell();
+        companyFinancialDetails.setPadding(5);
         companyFinancialDetails.addElement(gstin);
         companyFinancialDetails.setColspan(7);
 
@@ -77,6 +83,7 @@ public class InvoicePdfGenerator {
         PdfPCell companyOrder = new PdfPCell();
         companyOrder.addElement(order);
         companyOrder.setColspan(7);
+        companyOrder.setPadding(5);
 
         table.addCell(companyDetails);
         table.addCell(companyFinancialDetails);
@@ -86,7 +93,9 @@ public class InvoicePdfGenerator {
         PdfPCell receiver = new PdfPCell(new Paragraph("Details of Receiver (Billed to)", headerFont));
         PdfPCell consignee = new PdfPCell(new Paragraph("Details of Consignee (Shipped to)", headerFont));
         receiver.setColspan(7);
+        receiver.setPadding(5);
         consignee.setColspan(7);
+        consignee.setPadding(5);
         receiver.setGrayFill(0.8f);
         consignee.setGrayFill(0.8f);
         receiver.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -122,8 +131,10 @@ public class InvoicePdfGenerator {
 
         PdfPCell receiverCol = new PdfPCell();
         receiverCol.addElement(receiverDetails);
+        receiverCol.setPadding(5);
         PdfPCell consigneeCol = new PdfPCell();
         consigneeCol.addElement(consigneeDetails);
+        consigneeCol.setPadding(5);
         receiverCol.setColspan(7);
         consigneeCol.setColspan(7);
         table.addCell(receiverCol);
@@ -158,6 +169,7 @@ public class InvoicePdfGenerator {
 
         for (PdfPCell header : headersRow) {
             header.setRowspan(2);
+            header.setPadding(5);
             header.setHorizontalAlignment(Element.ALIGN_CENTER);
             header.setVerticalAlignment(Element.ALIGN_MIDDLE);
             table.addCell(header);
@@ -165,6 +177,7 @@ public class InvoicePdfGenerator {
 
         for (PdfPCell header : headersCOl) {
             header.setColspan(2);
+            header.setPadding(5);
             header.setHorizontalAlignment(Element.ALIGN_CENTER);
             header.setVerticalAlignment(Element.ALIGN_MIDDLE);
             table.addCell(header);
@@ -173,9 +186,11 @@ public class InvoicePdfGenerator {
         PdfPCell productHeaderTotalAmount = new PdfPCell(new Paragraph("Total Amount", headerFont));
         productHeaderTotalAmount.setColspan(2);
         productHeaderTotalAmount.setRowspan(2);
+        productHeaderTotalAmount.setPadding(5);
         table.addCell(productHeaderTotalAmount);
 
         for (PdfPCell header : headAfter) {
+            header.setPadding(5);
             header.setHorizontalAlignment(Element.ALIGN_CENTER);
             header.setVerticalAlignment(Element.ALIGN_MIDDLE);
             table.addCell(header);
@@ -187,6 +202,8 @@ public class InvoicePdfGenerator {
             for (String bogusDatum : bogusData) {
                 Phrase phrase = new Phrase(bogusDatum, textFont);
                 PdfPCell cell = new PdfPCell(phrase);
+                cell.setPadding(5);
+                cell.setFixedHeight(70);
                 table.addCell(cell);
             }
         }
@@ -196,10 +213,13 @@ public class InvoicePdfGenerator {
         netInvoice.add(new Chunk("Net Invoice Value", headerFont));
         PdfPCell netInvoiceCol = new PdfPCell();
         netInvoiceCol.addElement(netInvoice);
+        netInvoiceCol.setPadding(5);
         netInvoiceCol.setColspan(3);
         PdfPCell space = new PdfPCell(new Paragraph(""));
+        space.setPadding(5);
         space.setColspan(10);
         PdfPCell netInvoiceAmountCol = new PdfPCell(new Paragraph("118.00", textFont));
+        netInvoiceAmountCol.setPadding(5);
 
         table.addCell(netInvoiceCol);
         table.addCell(space);
@@ -210,11 +230,13 @@ public class InvoicePdfGenerator {
         invoice.add(new Chunk("Invoice Value (In words): ", headerFont));
         invoice.add(new Chunk(convertNumberToWords(118)+" Only", textFont));
         PdfPCell invoiceCol = new PdfPCell();
+        invoiceCol.setPadding(5);
         invoiceCol.addElement(invoice);
         invoiceCol.setColspan(14);
         table.addCell(invoiceCol);
 
         PdfPCell registeredOffice = new PdfPCell(new Paragraph("Registered Office: Bhola nath nagar, Shahdara, Delhi - 110032", FontFactory.getFont(FontFactory.HELVETICA, 8)));
+        registeredOffice.setPadding(5);
         registeredOffice.setHorizontalAlignment(Element.ALIGN_CENTER);
         registeredOffice.setColspan(14);
         table.addCell(registeredOffice);
