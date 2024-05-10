@@ -26,8 +26,7 @@ public class AddInvoiceRequest {
     private String billingAddress;
 
     @NotNull
-    @NotEmpty
-    private Integer billingContact;
+    private Long billingContact;
 
     @NotNull
     private Integer order_Id;

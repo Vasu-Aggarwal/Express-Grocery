@@ -22,8 +22,6 @@ public class InvoiceParticular {
 
     @Column(name = "basic_amount")
     private Double basicAmount;
-    @Column(name = "tax_amount")
-    private Double taxAmount;
     @Column(name = "gst_rate")
     private Double gstRate;
     @Column(name = "gst_amount")

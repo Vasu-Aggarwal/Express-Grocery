@@ -33,7 +33,7 @@ public class Invoice {
     @Column(name = "billing_address")
     private String billingAddress;
     @Column(name = "billing_contact")
-    private Integer billingContact;
+    private Long billingContact;
 
     @CreationTimestamp
     @Column(name = "invoice_date", updatable = false)
