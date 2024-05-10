@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/generateInvoice")
-    public ResponseEntity<InputStreamResource> generateInvoice(){
+    public ResponseEntity<InputStreamResource> generateInvoice()  {
         ByteArrayInputStream pdf = InvoicePdfGenerator.invoiceGenerator();
         HttpHeaders httpHeaders = new HttpHeaders();
         String filename = String.valueOf(Instant.now().toEpochMilli());
