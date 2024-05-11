@@ -16,4 +16,6 @@ public interface UserService {
     void deleteUser(String user_uuid);
     List<UserRegisterResponse> getAllUsers();
 
+    UserRegisterResponse registerUser(UserRegisterRequest userRegisterRequest);
+    UserRegisterResponse registerAminUser(UserRegisterRequest userRegisterRequest);
 }

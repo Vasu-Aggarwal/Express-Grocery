@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/invoice")
+@RequestMapping("/api/invoice")
 public class InvoiceController {
 
     @Autowired

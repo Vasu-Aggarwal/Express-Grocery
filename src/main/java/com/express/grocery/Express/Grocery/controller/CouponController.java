@@ -13,24 +13,27 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/coupon")
+@RequestMapping("/api/coupon")
 public class CouponController {
 
     @Autowired
     private CouponService couponService;
 
     @PostMapping("/addUpdateCoupon")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<AddUpdateCouponResponse> addUpdateCoupon(@RequestBody @Valid AddUpdateCouponRequest addUpdateCouponRequest){
         AddUpdateCouponResponse coupon = couponService.addUpdateCoupon(addUpdateCouponRequest);
         return new ResponseEntity<>(coupon, HttpStatus.CREATED);
     }
 
     @PostMapping("/assignCoupon")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<AssignCouponResponse> assignCoupon(@RequestBody @Valid AssignCouponRequest assignCouponRequest){
         AssignCouponResponse response = couponService.assignCoupon(assignCouponRequest);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);

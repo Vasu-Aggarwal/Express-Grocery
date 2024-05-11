@@ -12,13 +12,14 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api/product")
 public class ProductController {
 
     @Autowired
@@ -28,12 +29,14 @@ public class ProductController {
     private CategoryService categoryService;
 
     @PostMapping("/addUpdateProduct")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<AddUpdateProductResponse> addUpdateProduct(@RequestBody @Valid AddUpdateProductRequest addUpdateProductRequest){
         AddUpdateProductResponse product = productService.addUpdateProduct(addUpdateProductRequest);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
     @PostMapping("/excelUploadProducts/{added_by}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<AddUpdateProductResponse>> excelUploadProducts(@RequestParam("file") MultipartFile file, @PathVariable String added_by){
         if (!ProductExcelHelper.checkExcelExtension(file)){
             throw new BadExcelException("File extension should be excel");

@@ -29,4 +29,6 @@ public class UserRegisterRequest {
     @NotNull
     private String name;
     private Boolean isCoupon;
+
+    private String role;
 }
