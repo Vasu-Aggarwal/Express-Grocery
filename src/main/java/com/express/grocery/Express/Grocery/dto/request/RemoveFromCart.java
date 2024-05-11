@@ -11,28 +11,19 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddInvoiceRequest {
+public class RemoveFromCart {
+
+    @NotNull
+    private Integer cartDetailId;
 
     @NotNull
     @NotEmpty
     private String userUuid;
 
     @NotNull
-    private Integer invoiceStatus;
-    private String invoiceUrlPath;
+    private Integer product;
 
     @NotNull
-    @NotEmpty
-    private String shippingAddress;
-
-    @NotNull
-    @NotEmpty
-    private String billingAddress;
-
-    @NotNull
-    private Long billingContact;
-
-    @NotNull
-    private Integer order_Id;
+    private Integer productQuantity;
 
 }

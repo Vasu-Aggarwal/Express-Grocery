@@ -1,6 +1,7 @@
 package com.express.grocery.Express.Grocery.service.implementation;
 
 import com.express.grocery.Express.Grocery.dto.request.AddToCartRequest;
+import com.express.grocery.Express.Grocery.dto.request.RemoveFromCart;
 import com.express.grocery.Express.Grocery.dto.response.AddToCartResponse;
 import com.express.grocery.Express.Grocery.entity.*;
 import com.express.grocery.Express.Grocery.exception.BadRequestException;
@@ -10,6 +11,10 @@ import com.express.grocery.Express.Grocery.service.CartDetailService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class CartDetailServiceImpl implements CartDetailService {
@@ -46,7 +51,7 @@ public class CartDetailServiceImpl implements CartDetailService {
         Product product = productRepository.findById(addToCartRequest.getProduct())
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Product with product id: %s not found", addToCartRequest.getProduct()), 0));
 
-        CartDetail cartDetail = modelMapper.map(addToCartRequest, CartDetail.class);
+        CartDetail cartDetail = new CartDetail();
         cartDetail.setCart(cart);
         cartDetail.setProduct(product);
         AddToCartResponse cartResponse = modelMapper.map(cartDetailRepository.save(cartDetail), AddToCartResponse.class);
@@ -54,5 +59,23 @@ public class CartDetailServiceImpl implements CartDetailService {
         cartResponse.setProductDiscountedAmount(cartResponse.getProduct().getProductDiscountedPrice()*cartResponse.getProductQuantity());
         cartResponse.setProductAmount(cartResponse.getProduct().getProductPrice()*cartResponse.getProductQuantity());
         return cartResponse;
+    }
+
+    @Override
+    public Map<String, Object> removeFromCart(RemoveFromCart removeFromCart) {
+
+        CartDetail cartDetail = cartDetailRepository.findById(removeFromCart.getCartDetailId()).orElseThrow(() -> new ResourceNotFoundException("Cart Details not found", 0));
+
+        //if product quantity is equal to total quantity in cart then remove the product
+        if (Objects.equals(removeFromCart.getProductQuantity(), cartDetail.getProductQuantity())){
+            cartDetailRepository.delete(cartDetail);
+        } else {
+            cartDetail.setProductQuantity(removeFromCart.getProductQuantity());
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Product removed successfully");
+        response.put("status", 1);
+
+        return response;
     }
 }

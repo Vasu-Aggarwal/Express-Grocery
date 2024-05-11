@@ -3,6 +3,8 @@ package com.express.grocery.Express.Grocery.dto.request;
 import com.express.grocery.Express.Grocery.entity.Coupon;
 import com.express.grocery.Express.Grocery.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +19,16 @@ import java.util.List;
 @NoArgsConstructor
 public class AddToCartRequest {
 
-    private Integer cartDetailId;
+    @NotNull
+    @NotEmpty
+    private String userUuid;
+
+    @NotNull
     private Integer productQuantity;
+
+    @NotNull
     private Integer product;
+
+    @NotNull
     private Integer cart;
 }
