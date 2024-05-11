@@ -1,6 +1,7 @@
 package com.express.grocery.Express.Grocery.exception;
 
 import org.apache.coyote.Response;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -44,6 +45,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<BadApiResponse> badRequestException(BadRequestException ex){
+        String message = ex.getMessage();
+        BadApiResponse badApiResponse = new BadApiResponse(message, 0);
+        return new ResponseEntity<>(badApiResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<BadApiResponse> duplicateEntry(DataIntegrityViolationException ex){
         String message = ex.getMessage();
         BadApiResponse badApiResponse = new BadApiResponse(message, 0);
         return new ResponseEntity<>(badApiResponse, HttpStatus.BAD_REQUEST);

@@ -4,15 +4,15 @@ import com.express.grocery.Express.Grocery.dto.request.UserRegisterRequest;
 import com.express.grocery.Express.Grocery.dto.response.UserRegisterResponse;
 import com.express.grocery.Express.Grocery.entity.Cart;
 import com.express.grocery.Express.Grocery.entity.User;
+import com.express.grocery.Express.Grocery.exception.BadRequestException;
 import com.express.grocery.Express.Grocery.repository.CartRepository;
 import com.express.grocery.Express.Grocery.repository.UserRepository;
 import com.express.grocery.Express.Grocery.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -29,16 +29,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRegisterResponse createUser(UserRegisterRequest userRegisterRequest) {
-        User user = modelMapper.map(userRegisterRequest, User.class);
-        user.setUsername(userRegisterRequest.getName().substring(0, 2)+userRegisterRequest.getMobile().toString().substring(0, 3)+ UUID.randomUUID().toString().substring(0, 4));
-        user.setIsCoupon(false);
-        User savedUser = userRepository.save(user);
-        //When user is created, create a new cart for this user to add the products
-        Cart cart = new Cart();
-        cart.setUser(savedUser);
-        cart.setCouponApplied(false);
-        cartRepository.save(cart);
-        return modelMapper.map(savedUser, UserRegisterResponse.class);
+
+        try {
+            User user = modelMapper.map(userRegisterRequest, User.class);
+            user.setUsername(userRegisterRequest.getName().substring(0, 2) + userRegisterRequest.getMobile().toString().substring(0, 3) + UUID.randomUUID().toString().substring(0, 4));
+            user.setIsCoupon(false);
+            User savedUser = userRepository.save(user);
+
+            //When user is created, create a new cart for this user to add the products
+            Cart cart = new Cart();
+            cart.setUser(savedUser);
+            cart.setCouponApplied(false);
+            cartRepository.save(cart);
+            return modelMapper.map(savedUser, UserRegisterResponse.class);
+        } catch (DataIntegrityViolationException ex){
+            throw new DataIntegrityViolationException("Mobile or Email already exists. Please try again with different mobile or email");
+        }
     }
 
     @Override
