@@ -41,7 +41,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderCheckoutResponse orderCheckout(OrderCheckoutRequest orderCheckoutRequest) {
-        Order order = new Order();
+        Order order = modelMapper.map(orderCheckoutRequest, Order.class);
+
+        //if order is status is in transaction then add new transaction in db.
+        if (orderCheckoutRequest.getOrderStatus() == AppConstants.ORDER_IN_TRANSACT.getValue()){
+            Transaction transaction = new Transaction();
+            transaction.setOrder_id(order);
+            transaction.setTransactionStatus(AppConstants.TRANSACTION_PENDING.getValue());
+            transaction.setTransactionAmount(order.getOrderAmount());
+            transaction.setTransactionMode(AppConstants.TRANSACTION_MODE_COD.getValue()); //this is dummy value because after this user have to make new transaction for proper payment.
+            transactionRepository.save(transaction);
+        }
 
         //find user with user uuid present in request
         User user = userRepository.findById(orderCheckoutRequest.getUser()).orElseThrow(() -> new ResourceNotFoundException(String.format("User with uuid: %s not found", orderCheckoutRequest.getUser()), 0));

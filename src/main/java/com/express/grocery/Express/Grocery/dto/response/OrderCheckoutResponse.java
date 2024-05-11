@@ -24,6 +24,5 @@ public class OrderCheckoutResponse {
     private Double orderAmount;
     private Integer orderStatus;
     private CouponDto coupon;
-    private List<ProductDto> products = new ArrayList<>();
-
+//    private List<ProductDto> products = new ArrayList<>();
 }
