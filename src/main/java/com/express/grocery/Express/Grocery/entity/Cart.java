@@ -48,4 +48,7 @@ public class Cart {
     @LastModifiedDate
     @JoinColumn(name = "modified_on")
     private LocalDateTime modifiedOn;
+
+    @JoinColumn(name = "net_cart_amount")
+    private Double netAmount;
 }

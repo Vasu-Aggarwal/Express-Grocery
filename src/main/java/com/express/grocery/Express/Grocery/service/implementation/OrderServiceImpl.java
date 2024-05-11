@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderCheckoutResponse orderCheckout(OrderCheckoutRequest orderCheckoutRequest) {
-        Order order = modelMapper.map(orderCheckoutRequest, Order.class);
+        Order order = new Order();
 
         //find user with user uuid present in request
         User user = userRepository.findById(orderCheckoutRequest.getUser()).orElseThrow(() -> new ResourceNotFoundException(String.format("User with uuid: %s not found", orderCheckoutRequest.getUser()), 0));
@@ -61,20 +61,14 @@ public class OrderServiceImpl implements OrderService {
 
         //Link cart to the order
         order.setCartId(cart);
+        order.setOrderAmount(cart.getNetAmount());
 
-        //check if coupon is null or not
-        Order newOrder;
-
-        if (orderCheckoutRequest.getCoupon() == null || orderCheckoutRequest.getCoupon().isEmpty() || orderCheckoutRequest.getCoupon().isBlank()){
-            newOrder = orderRepository.save(order);
-        } else {
-            Coupon coupon = couponRepository.findByCouponName(orderCheckoutRequest.getCoupon()).orElseThrow(() -> new ResourceNotFoundException(String.format("Coupon with name: %s not found", orderCheckoutRequest.getCoupon()), 0));
-
-            order.setCoupon(coupon);
-            newOrder = orderRepository.save(order);
+        //Check if coupon was applied by the user in Cart
+        if (cart.getCouponApplied()){
+            order.setCoupon(cart.getCoupon());
         }
 
-        return modelMapper.map(newOrder, OrderCheckoutResponse.class);
+        return modelMapper.map(orderRepository.save(order), OrderCheckoutResponse.class);
     }
 
     @Override

@@ -62,6 +62,7 @@ public class CartServiceImpl implements CartService {
 
         //Calculate the total discount amount: category discount
         double discountAmount = cartDetails.stream().mapToDouble(AddToCartResponse::getProductDiscountedAmount).sum();
+        cart.setNetAmount(discountAmount);
 
         listCartDetailsResponse.setBeforeDiscount(totalAmount);
         listCartDetailsResponse.setAfterDiscount(discountAmount);
@@ -77,16 +78,20 @@ public class CartServiceImpl implements CartService {
             Coupon coupon = couponRepository.findByCouponName(cart.getCoupon().getCouponName()).orElseThrow(() -> new ResourceNotFoundException((String.format("Coupon with name: %s not found", cart.getCoupon().getCouponName())), 0));
 
             double cartDiscountAfterCoupon = listCartDetailsResponse.getAfterDiscount() * (coupon.getDiscountPercent().doubleValue() / 100);
+            //if discount amount is greater than coupon max amount then give user the coupon amount discount
             if (cartDiscountAfterCoupon >= coupon.getMaxDiscount()) {
                 listCartDetailsResponse.setAfterDiscount(discountAmount - coupon.getMaxDiscount());
+                cart.setNetAmount(discountAmount-coupon.getMaxDiscount());
                 listCartDetailsResponse.setSavedAmount((totalAmount - discountAmount) + coupon.getMaxDiscount());
             } else {
-                listCartDetailsResponse.setAfterDiscount(listCartDetailsResponse.getAfterDiscount() - cartDiscountAfterCoupon);
+                cart.setNetAmount(discountAmount - cartDiscountAfterCoupon);
+                listCartDetailsResponse.setAfterDiscount(discountAmount - cartDiscountAfterCoupon);
                 listCartDetailsResponse.setSavedAmount((totalAmount - discountAmount) + cartDiscountAfterCoupon);
             }
         }
 
         //Then show the cart details of that cart
+        cartRepository.save(cart);
         return listCartDetailsResponse;
     }
 }

@@ -141,7 +141,15 @@ public class ProductServiceImpl implements ProductService {
         List<CategoryDto> applicableDiscountedCategories = product.getCategories().stream().filter(CategoryDto::getIsCoupon).collect(Collectors.toList());
         Optional<CategoryDto> maxDiscountCategory = applicableDiscountedCategories.stream().max(Comparator.comparingDouble(cat-> cat.getCoupon().getDiscountPercent()));
         maxDiscountCategory.ifPresentOrElse(categoryDto -> {
-            double discountAmount = product.getProductPrice() - (product.getProductPrice() * ((double) (categoryDto.getCoupon().getDiscountPercent()) /100));
+            //find the total discount amount on the product
+            double findMaxDiscountAmount = product.getProductPrice() * ((double) (categoryDto.getCoupon().getDiscountPercent()) /100);
+            double discountAmount;
+            //if discount amount is greater or equal then apply max discount otherwise the discount percent of the coupon
+            if (findMaxDiscountAmount >= categoryDto.getCoupon().getMaxDiscount()){
+                discountAmount = product.getProductPrice() - categoryDto.getCoupon().getMaxDiscount();
+            } else {
+                discountAmount = product.getProductPrice() - findMaxDiscountAmount;
+            }
             product.setDiscountOnCategory(categoryDto.getCoupon().getDiscountPercent());
             product.setProductDiscountedPrice(discountAmount);
         }, () -> {

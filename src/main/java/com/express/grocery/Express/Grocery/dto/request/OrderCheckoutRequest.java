@@ -19,10 +19,5 @@ public class OrderCheckoutRequest {
     private String user;
 
     @NotNull
-    @Min(value = 10)
-    private Double orderAmount;
-
-    @NotNull
     private Integer orderStatus;
-    private String coupon;
 }

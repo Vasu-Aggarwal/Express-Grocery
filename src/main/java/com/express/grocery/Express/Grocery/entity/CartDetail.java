@@ -41,7 +41,4 @@ public class CartDetail {
     @JoinColumn(name = "modified_on")
     private LocalDateTime modifiedOn;
 
-    @Transient
-    private Double productDiscount;
-
 }

@@ -1,5 +1,7 @@
 package com.express.grocery.Express.Grocery.dto.response;
 
+import com.express.grocery.Express.Grocery.dto.CouponDto;
+import com.express.grocery.Express.Grocery.dto.ProductDto;
 import com.express.grocery.Express.Grocery.entity.Coupon;
 import com.express.grocery.Express.Grocery.entity.Product;
 import lombok.AllArgsConstructor;
@@ -21,8 +23,7 @@ public class OrderCheckoutResponse {
     private LocalDateTime orderDate;
     private Double orderAmount;
     private Integer orderStatus;
-    private Coupon coupon;
-//    private Invoice invoice;
-    private List<Product> products = new ArrayList<>();
+    private CouponDto coupon;
+    private List<ProductDto> products = new ArrayList<>();
 
 }

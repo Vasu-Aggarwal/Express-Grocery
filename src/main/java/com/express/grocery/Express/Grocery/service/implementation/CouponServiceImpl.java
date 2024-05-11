@@ -56,6 +56,7 @@ public class CouponServiceImpl implements CouponService {
             return modelMapper.map(couponRepository.save(oldCoupon), AddUpdateCouponResponse.class);
         } else {
             Coupon coupon = modelMapper.map(addUpdateCouponRequest, Coupon.class);
+            coupon.setCouponType(CouponType.valueOf(addUpdateCouponRequest.getCouponType()));
             coupon.setCouponStatus(AppConstants.ACTIVE_COUPON.getValue());
             return modelMapper.map(couponRepository.save(coupon), AddUpdateCouponResponse.class);
         }

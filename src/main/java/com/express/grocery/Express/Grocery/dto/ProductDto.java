@@ -21,5 +21,5 @@ public class ProductDto {
     private String productImg;
     private Timestamp addedOn;
     private Timestamp modifiedOn;
-    private User addedBy;
+    private UserDto addedBy;
 }

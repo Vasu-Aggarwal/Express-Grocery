@@ -1,5 +1,6 @@
 package com.express.grocery.Express.Grocery.util;
 
+import com.express.grocery.Express.Grocery.dto.response.AddToCartResponse;
 import com.express.grocery.Express.Grocery.entity.CartDetail;
 import com.express.grocery.Express.Grocery.entity.Invoice;
 import com.express.grocery.Express.Grocery.entity.InvoiceParticular;
@@ -29,7 +30,7 @@ public class InvoicePdfGenerator {
     private static final String[] teens = {"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
     private static final String[] tens = {"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
 
-    public static ByteArrayInputStream invoiceGenerator(Invoice invoice, InvoiceParticular invoiceParticular, List<CartDetail> products) {
+    public static ByteArrayInputStream invoiceGenerator(Invoice invoice, InvoiceParticular invoiceParticular, List<CartDetail> cartDetails) {
         logger.info("PDF is being generated...\n");
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
@@ -202,33 +203,29 @@ public class InvoicePdfGenerator {
         }
 
         int sno = 1;
-        for (CartDetail cartDetail: products){
+        double netAmount = 0.00;
+
+        for (CartDetail cartDetail: cartDetails){
+            ProductCalculatorHelper productCalculatorHelper = new ProductCalculatorHelper();
+            productCalculatorHelper.findProductDiscount(cartDetail.getProduct());
+
             table.addCell(createCell(Integer.toString(sno), textFont));
             table.addCell(createCell(cartDetail.getProduct().getProductId().toString(), textFont));
             table.addCell(createCell(cartDetail.getProduct().getProductName(), textFont));
             table.addCell(createCell(cartDetail.getProductQuantity().toString(), textFont));
             table.addCell(createCell(cartDetail.getProduct().getProductPrice().toString(), textFont));
-            table.addCell(createCell(cartDetail.getProduct().getProductPrice().toString(), textFont));
-            table.addCell(createCell(invoiceParticular.getGstAmount().toString(), textFont));
+            table.addCell(createCell(productCalculatorHelper.getProductDiscountedAmount().toString(), textFont));
+            table.addCell(createCell(String.valueOf(invoiceParticular.getGstRate()*productCalculatorHelper.getProductDiscountedAmount()), textFont));
             table.addCell(createCell("-", textFont));
             table.addCell(createCell("-", textFont));
             table.addCell(createCell("-", textFont));
             table.addCell(createCell("-", textFont));
             table.addCell(createCell("-", textFont));
             table.addCell(createCell("-", textFont));
-            table.addCell(createCell(cartDetail.getProduct().getProductPrice().toString(), textFont));
+            table.addCell(createCell(String.valueOf((productCalculatorHelper.getProductDiscountedAmount()*cartDetail.getProductQuantity())+invoiceParticular.getGstRate()*productCalculatorHelper.getProductDiscountedAmount()), textFont));
+            netAmount += (productCalculatorHelper.getProductDiscountedAmount()*cartDetail.getProductQuantity())+invoiceParticular.getGstRate()*productCalculatorHelper.getProductDiscountedAmount();
             sno++;
         }
-
-//        for (int i=0;i<2;i++){
-//            for (String bogusDatum : productData) {
-//                Phrase phrase = new Phrase(bogusDatum, textFont);
-//                PdfPCell cell = new PdfPCell(phrase);
-//                cell.setPadding(5);
-//                cell.setFixedHeight(70);
-//                table.addCell(cell);
-//            }
-//        }
 
         //Net invoice
         Phrase netInvoice = new Phrase();
@@ -240,7 +237,7 @@ public class InvoicePdfGenerator {
         PdfPCell space = new PdfPCell(new Paragraph(""));
         space.setPadding(5);
         space.setColspan(10);
-        PdfPCell netInvoiceAmountCol = new PdfPCell(new Paragraph("118.00", textFont));
+        PdfPCell netInvoiceAmountCol = new PdfPCell(new Paragraph(String.valueOf(netAmount), textFont));
         netInvoiceAmountCol.setPadding(5);
 
         table.addCell(netInvoiceCol);
@@ -250,7 +247,7 @@ public class InvoicePdfGenerator {
         //Invoice in words
         Phrase invoicePhrase = new Phrase();
         invoicePhrase.add(new Chunk("Invoice Value (In words): ", headerFont));
-        invoicePhrase.add(new Chunk(convertNumberToWords(118)+" Only", textFont));
+        invoicePhrase.add(new Chunk(convertNumberToWords((int) netAmount)+" Only", textFont));
         PdfPCell invoiceCol = new PdfPCell();
         invoiceCol.setPadding(5);
         invoiceCol.addElement(invoicePhrase);
@@ -297,15 +294,15 @@ public class InvoicePdfGenerator {
             return tens[number / 10] + ((number % 10 != 0) ? " " + convert(number % 10) : "");
         }
         if (number < 1000) {
-            return units[number / 100] + " Hundred" + ((number % 100 != 0) ? " and " + convert(number % 100) : "");
+            return units[number / 100] + " Hundred" + ((number % 100 != 0) ? " " + convert(number % 100) : "");
         }
-        if (number < 1000000) {
+        if (number < 100000) {
             return convert(number / 1000) + " Thousand" + ((number % 1000 != 0) ? " " + convert(number % 1000) : "");
         }
-        if (number < 1000000000) {
-            return convert(number / 1000000) + " Million" + ((number % 1000000 != 0) ? " " + convert(number % 1000000) : "");
+        if (number < 10000000) {
+            return convert(number / 100000) + " Lakh" + ((number % 100000 != 0) ? " " + convert(number % 100000) : "");
         }
-        return convert(number / 1000000000) + " Billion" + ((number % 1000000000 != 0) ? " " + convert(number % 1000000000) : "");
+        return convert(number / 10000000) + " Crore" + ((number % 10000000 != 0) ? " " + convert(number % 10000000) : "");
     }
 
 }
