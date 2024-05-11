@@ -22,6 +22,10 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class AddUpdateCouponRequest {
 
+    @NotNull(message = "User uuid cannot be null")
+    @NotEmpty
+    private String userUuid;
+
     private Integer couponId;
 
     @NotNull

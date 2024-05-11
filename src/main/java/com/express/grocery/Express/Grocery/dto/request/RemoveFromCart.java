@@ -16,7 +16,7 @@ public class RemoveFromCart {
     @NotNull
     private Integer cartDetailId;
 
-    @NotNull
+    @NotNull(message = "User uuid cannot be null")
     @NotEmpty
     private String userUuid;
 

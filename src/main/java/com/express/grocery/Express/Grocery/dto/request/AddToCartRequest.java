@@ -19,14 +19,14 @@ import java.util.List;
 @NoArgsConstructor
 public class AddToCartRequest {
 
-    @NotNull
+    @NotNull(message = "User uuid cannot be null")
     @NotEmpty
     private String userUuid;
 
-    @NotNull
+    @NotNull(message = "Product Quantity cannot be null")
     private Integer productQuantity;
 
-    @NotNull
+    @NotNull(message = "product id cannot be null")
     private Integer product;
 
     @NotNull

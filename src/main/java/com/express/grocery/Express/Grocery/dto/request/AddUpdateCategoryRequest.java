@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddUpdateCategoryRequest {
 
+    @NotNull(message = "User uuid cannot be null")
+    @NotEmpty
+    private String userUuid;
+
     private Integer categoryId;
 
     @NotEmpty

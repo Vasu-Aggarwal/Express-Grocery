@@ -15,6 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class NewTransactionRequest {
 
+    @NotNull
+    @NotEmpty
+    private String userUuid;
 
     private Integer transactionId;
 

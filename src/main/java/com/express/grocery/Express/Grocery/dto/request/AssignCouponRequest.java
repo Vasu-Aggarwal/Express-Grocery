@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AssignCouponRequest {
 
-    @NotNull
+    @NotNull(message = "User uuid cannot be null")
     @NotEmpty
     private String userUuid;
 

@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OrderCheckoutRequest {
 
-    @NotNull
+    @NotNull(message = "User uuid cannot be null")
     @NotEmpty
     private String user;
 
