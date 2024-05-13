@@ -23,7 +23,4 @@ public class RemoveFromCart {
     @NotNull
     private Integer product;
 
-    @NotNull
-    private Integer productQuantity;
-
 }

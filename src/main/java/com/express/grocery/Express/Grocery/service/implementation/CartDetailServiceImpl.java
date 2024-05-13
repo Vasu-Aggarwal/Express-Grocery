@@ -4,6 +4,7 @@ import com.express.grocery.Express.Grocery.dto.request.AddToCartRequest;
 import com.express.grocery.Express.Grocery.dto.request.RemoveFromCart;
 import com.express.grocery.Express.Grocery.dto.response.AddToCartResponse;
 import com.express.grocery.Express.Grocery.entity.*;
+import com.express.grocery.Express.Grocery.exception.BadApiResponse;
 import com.express.grocery.Express.Grocery.exception.BadRequestException;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
 import com.express.grocery.Express.Grocery.repository.*;
@@ -13,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class CartDetailServiceImpl implements CartDetailService {
@@ -65,13 +68,23 @@ public class CartDetailServiceImpl implements CartDetailService {
     @Override
     public Map<String, Object> removeFromCart(RemoveFromCart removeFromCart) {
 
+        //check if cart details belong to the user
+        User user = userRepository.findById(removeFromCart.getUserUuid()).orElseThrow(() -> new ResourceNotFoundException("User not found. Something went Wrong", 0));
+
+        List<Integer> cartDetailIds = user.getCart().getCartDetails().stream().map((CartDetail::getCartDetailId)).collect(Collectors.toList());
+
+        if (!cartDetailIds.contains(removeFromCart.getCartDetailId())){
+            throw new BadRequestException("Cart details not found. Something went wrong");
+        }
+
         CartDetail cartDetail = cartDetailRepository.findById(removeFromCart.getCartDetailId()).orElseThrow(() -> new ResourceNotFoundException("Cart Details not found", 0));
 
         //if product quantity is equal to total quantity in cart then remove the product
-        if (Objects.equals(removeFromCart.getProductQuantity(), cartDetail.getProductQuantity())){
+        if (cartDetail.getProductQuantity() == 1){
             cartDetailRepository.delete(cartDetail);
         } else {
-            cartDetail.setProductQuantity(removeFromCart.getProductQuantity());
+            cartDetail.setProductQuantity(cartDetail.getProductQuantity()-1);
+            cartDetailRepository.save(cartDetail);
         }
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Product removed successfully");
