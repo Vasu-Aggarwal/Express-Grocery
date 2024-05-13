@@ -214,7 +214,7 @@ public class InvoicePdfGenerator {
             table.addCell(createCell(cartDetail.getProduct().getProductName(), textFont));
             table.addCell(createCell(cartDetail.getProductQuantity().toString(), textFont));
             table.addCell(createCell(cartDetail.getProduct().getProductPrice().toString(), textFont));
-            table.addCell(createCell(productCalculatorHelper.getProductDiscountedAmount().toString(), textFont));
+            table.addCell(createCell(productCalculatorHelper.getSavedAmount().toString(), textFont));
             table.addCell(createCell(String.valueOf(invoiceParticular.getGstRate()*productCalculatorHelper.getProductDiscountedAmount()), textFont));
             table.addCell(createCell("-", textFont));
             table.addCell(createCell("-", textFont));

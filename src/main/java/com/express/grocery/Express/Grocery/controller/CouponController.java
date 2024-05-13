@@ -26,14 +26,14 @@ public class CouponController {
     private CouponService couponService;
 
     @PostMapping("/addUpdateCoupon")
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<AddUpdateCouponResponse> addUpdateCoupon(@RequestBody @Valid AddUpdateCouponRequest addUpdateCouponRequest){
         AddUpdateCouponResponse coupon = couponService.addUpdateCoupon(addUpdateCouponRequest);
         return new ResponseEntity<>(coupon, HttpStatus.CREATED);
     }
 
     @PostMapping("/assignCoupon")
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<AssignCouponResponse> assignCoupon(@RequestBody @Valid AssignCouponRequest assignCouponRequest){
         AssignCouponResponse response = couponService.assignCoupon(assignCouponRequest);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);

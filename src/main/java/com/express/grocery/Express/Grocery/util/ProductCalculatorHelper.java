@@ -20,15 +20,24 @@ public class ProductCalculatorHelper {
 
     private Double productDiscountedAmount;
     private Integer discountOnCategory;
+    private Double savedAmount;
 
     public void findProductDiscount(Product product){
         List<Category> applicableDiscountedCategories = product.getCategories().stream().filter(Category::getIsCoupon).collect(Collectors.toList());
         Optional<Category> maxDiscountCategory = applicableDiscountedCategories.stream().max(Comparator.comparingDouble(cat-> cat.getCoupon().getDiscountPercent()));
         maxDiscountCategory.ifPresentOrElse(category -> {
-            double discountAmount = product.getProductPrice() - (product.getProductPrice() * ((double) (category.getCoupon().getDiscountPercent()) /100));
+            double maxDiscount = product.getProductPrice() * ((double) (category.getCoupon().getDiscountPercent()) /100);
+            double discountAmount = 0;
+            if (maxDiscount >= category.getCoupon().getMaxDiscount()){
+                discountAmount = product.getProductPrice() - category.getCoupon().getMaxDiscount();
+            } else {
+                discountAmount = product.getProductPrice() - (product.getProductPrice() * ((double) (category.getCoupon().getDiscountPercent()) /100));
+            }
+            setSavedAmount(product.getProductPrice() - discountAmount);
             setDiscountOnCategory(category.getCoupon().getDiscountPercent());
             setProductDiscountedAmount(discountAmount);
         }, () -> {
+            setSavedAmount(0.00);
             setDiscountOnCategory(0);
             setProductDiscountedAmount(product.getProductPrice());
         });

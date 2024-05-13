@@ -18,7 +18,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/addUpdateCategory")
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<CategoryDto> addUpdateCategory(@RequestBody @Valid AddUpdateCategoryRequest addUpdateCategoryRequest){
         CategoryDto categoryDto = categoryService.addUpdateCategory(addUpdateCategoryRequest);
         return new ResponseEntity<>(categoryDto, HttpStatus.ACCEPTED);

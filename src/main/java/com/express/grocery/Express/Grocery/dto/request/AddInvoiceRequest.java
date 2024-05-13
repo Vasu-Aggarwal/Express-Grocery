@@ -1,9 +1,7 @@
 package com.express.grocery.Express.Grocery.dto.request;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +30,6 @@ public class AddInvoiceRequest {
     private String billingAddress;
 
     @NotNull(message = "Contact number cannot be null")
-    @Size(min = 10)
     private Long billingContact;
 
     @NotNull
