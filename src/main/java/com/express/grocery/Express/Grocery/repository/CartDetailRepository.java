@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface CartDetailRepository extends JpaRepository<CartDetail, Integer> {
     @Modifying
-    @Query("DELETE FROM cart_detail t WHERE t.cd_id = :pid")
-    void deleteByPid(@Param("pid") Integer theId);
+    @Query("DELETE FROM CartDetail t WHERE t.cartDetailId = :pid")
+    void deleteByCartDetailId(@Param("pid") Integer theId);
 }

@@ -83,7 +83,8 @@ public class CartDetailServiceImpl implements CartDetailService {
 
         //if product quantity is equal to total quantity in cart then remove the product
         if (cartDetail.getProductQuantity() == 1){
-            cartDetailRepository.deleteByPid(cartDetail.getCartDetailId());
+            cartDetailRepository.deleteByCartDetailId(cartDetail.getCartDetailId());
+//            cartDetailRepository.delete(cartDetail);
         } else {
             cartDetail.setProductQuantity(cartDetail.getProductQuantity()-1);
             cartDetailRepository.save(cartDetail);
