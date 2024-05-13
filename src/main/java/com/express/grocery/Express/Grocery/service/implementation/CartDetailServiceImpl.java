@@ -54,6 +54,7 @@ public class CartDetailServiceImpl implements CartDetailService {
         CartDetail cartDetail = new CartDetail();
         cartDetail.setCart(cart);
         cartDetail.setProduct(product);
+        cartDetail.setProductQuantity(addToCartRequest.getProductQuantity());
         AddToCartResponse cartResponse = modelMapper.map(cartDetailRepository.save(cartDetail), AddToCartResponse.class);
         ProductServiceImpl.productDiscountHelper(cartResponse.getProduct());
         cartResponse.setProductDiscountedAmount(cartResponse.getProduct().getProductDiscountedPrice()*cartResponse.getProductQuantity());
