@@ -12,6 +12,7 @@ import com.express.grocery.Express.Grocery.service.CartDetailService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +66,7 @@ public class CartDetailServiceImpl implements CartDetailService {
         return cartResponse;
     }
 
+    @Transactional
     @Override
     public Map<String, Object> removeFromCart(RemoveFromCart removeFromCart) {
 
@@ -81,7 +83,7 @@ public class CartDetailServiceImpl implements CartDetailService {
 
         //if product quantity is equal to total quantity in cart then remove the product
         if (cartDetail.getProductQuantity() == 1){
-            cartDetailRepository.delete(cartDetail);
+            cartDetailRepository.deleteByPid(cartDetail.getCartDetailId());
         } else {
             cartDetail.setProductQuantity(cartDetail.getProductQuantity()-1);
             cartDetailRepository.save(cartDetail);
