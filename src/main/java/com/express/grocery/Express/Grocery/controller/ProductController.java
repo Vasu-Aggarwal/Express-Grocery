@@ -29,14 +29,14 @@ public class ProductController {
     private CategoryService categoryService;
 
     @PostMapping("/addUpdateProduct")
-//    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AddUpdateProductResponse> addUpdateProduct(@RequestBody @Valid AddUpdateProductRequest addUpdateProductRequest){
         AddUpdateProductResponse product = productService.addUpdateProduct(addUpdateProductRequest);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
     @PostMapping("/excelUploadProducts/{added_by}")
-//    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AddUpdateProductResponse>> excelUploadProducts(@RequestParam("file") MultipartFile file, @PathVariable String added_by){
         if (!ProductExcelHelper.checkExcelExtension(file)){
             throw new BadExcelException("File extension should be excel");
