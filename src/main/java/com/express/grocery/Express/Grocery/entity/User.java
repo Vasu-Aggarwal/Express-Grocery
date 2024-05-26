@@ -64,6 +64,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
+    @OneToOne(mappedBy = "user")
+    private RefreshToken refreshToken;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user", referencedColumnName = "username"), inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "role_id"))
     private Set<Role> roles = new HashSet<>();

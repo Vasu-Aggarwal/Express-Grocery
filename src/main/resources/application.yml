@@ -2,6 +2,8 @@ server:
   port: 9090
 
 spring:
+  profiles:
+    active: dev
   application:
     name: "Express-Grocery"
 
@@ -10,12 +12,6 @@ spring:
     multipart:
       max-file-size: 3MB
       max-request-size: 3MB
-
-
-#  security:
-#    user:
-#      name: "vasu"
-#      password: "vasu"
 
   jpa:
     show-sql: true
