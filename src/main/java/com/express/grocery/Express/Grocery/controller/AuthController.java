@@ -7,6 +7,7 @@ import com.express.grocery.Express.Grocery.dto.response.JwtResponse;
 import com.express.grocery.Express.Grocery.dto.response.UserRegisterResponse;
 import com.express.grocery.Express.Grocery.entity.RefreshToken;
 import com.express.grocery.Express.Grocery.entity.User;
+import com.express.grocery.Express.Grocery.exception.BadCredentialException;
 import com.express.grocery.Express.Grocery.security.JwtHelper;
 import com.express.grocery.Express.Grocery.service.RefreshTokenService;
 import com.express.grocery.Express.Grocery.service.UserService;
@@ -91,15 +92,10 @@ public class AuthController {
             manager.authenticate(authentication);
 
 
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException(" Invalid Username or Password  !!");
+        } catch (BadCredentialException e) {
+            throw new BadCredentialException();
         }
 
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public String exceptionHandler() {
-        return "Credentials Invalid !!";
     }
 
 }

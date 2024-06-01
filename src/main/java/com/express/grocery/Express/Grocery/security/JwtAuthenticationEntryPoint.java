@@ -1,5 +1,6 @@
 package com.express.grocery.Express.Grocery.security;
 
+import com.express.grocery.Express.Grocery.exception.BadCredentialException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,8 +15,11 @@ import java.io.PrintWriter;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            PrintWriter writer = response.getWriter();
-            writer.println("Access Denied !! "+authException.getMessage());
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        PrintWriter writer = response.getWriter();
+        String jsonErrorResponse = String.format("{\"message\": \"%s\", \"status\": 0}", authException.getMessage());
+        writer.write(jsonErrorResponse);
+        writer.flush();
     }
 }

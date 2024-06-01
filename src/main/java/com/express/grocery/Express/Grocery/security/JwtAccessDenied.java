@@ -13,9 +13,12 @@ import java.io.PrintWriter;
 @Component
 public class JwtAccessDenied implements AccessDeniedHandler {
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("application/json");
         PrintWriter writer = response.getWriter();
-        writer.println("Access Denied: " + accessDeniedException.getMessage());
+        String jsonErrorResponse = String.format("{\"message\": \"%s\", \"status\": 0}", accessDeniedException.getMessage());
+        writer.write(jsonErrorResponse);
+        writer.flush();
     }
 }
