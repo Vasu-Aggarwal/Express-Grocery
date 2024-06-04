@@ -3,3 +3,7 @@ spring:
     url: jdbc:mysql://localhost:3306/express_store?createDatabaseIfNotExist=true
     username: root
     password: admin
+
+  sql:
+    init:
+      mode: embedded

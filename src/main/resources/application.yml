@@ -28,10 +28,6 @@ spring:
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  sql:
-    init:
-      mode: always
-
 logging:
   level:
     org:
