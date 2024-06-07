@@ -3,6 +3,7 @@ package com.express.grocery.Express.Grocery.controller;
 import com.express.grocery.Express.Grocery.dto.request.AddToCartRequest;
 import com.express.grocery.Express.Grocery.dto.request.RemoveFromCart;
 import com.express.grocery.Express.Grocery.dto.response.AddToCartResponse;
+import com.express.grocery.Express.Grocery.dto.response.CartCountResponse;
 import com.express.grocery.Express.Grocery.dto.response.ListCartDetailsResponse;
 import com.express.grocery.Express.Grocery.service.CartDetailService;
 import com.express.grocery.Express.Grocery.service.CartService;
@@ -42,6 +43,12 @@ public class CartDetailController {
     public ResponseEntity<ListCartDetailsResponse> getCartDetails(@PathVariable String userUuid){
         ListCartDetailsResponse listCartDetailsResponse = cartService.getCartDetails(userUuid);
         return new ResponseEntity<>(listCartDetailsResponse, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/getCartCount/{userUuid}")
+    public ResponseEntity<CartCountResponse> getCartCount(@PathVariable String userUuid){
+        CartCountResponse cartCountResponse = cartService.getCartCount(userUuid);
+        return new ResponseEntity<>(cartCountResponse, HttpStatus.OK);
     }
 
 }

@@ -8,6 +8,8 @@ import com.express.grocery.Express.Grocery.dto.response.UserRegisterResponse;
 import com.express.grocery.Express.Grocery.entity.RefreshToken;
 import com.express.grocery.Express.Grocery.entity.User;
 import com.express.grocery.Express.Grocery.exception.BadCredentialException;
+import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
+import com.express.grocery.Express.Grocery.repository.UserRepository;
 import com.express.grocery.Express.Grocery.security.JwtHelper;
 import com.express.grocery.Express.Grocery.service.RefreshTokenService;
 import com.express.grocery.Express.Grocery.service.UserService;
@@ -39,6 +41,9 @@ public class AuthController {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Autowired
     private JwtHelper helper;
@@ -55,10 +60,12 @@ public class AuthController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         String token = this.helper.generateToken(userDetails);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername());
-
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new ResourceNotFoundException("User not found", 0));
         JwtResponse response = JwtResponse.builder()
                 .refreshToken(refreshToken.getRefreshToken())
-                .token(token).build();
+                .token(token)
+                .userUuid(user.getUserUuid())
+                .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

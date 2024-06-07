@@ -4,6 +4,6 @@ spring:
     username: root
     password: admin
 
-  sql:
-    init:
-      mode: embedded
+#  sql:
+#    init:
+#      mode: always

@@ -2,6 +2,7 @@ package com.express.grocery.Express.Grocery.service.implementation;
 
 import com.express.grocery.Express.Grocery.dto.response.AddToCartResponse;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
+import com.express.grocery.Express.Grocery.dto.response.CartCountResponse;
 import com.express.grocery.Express.Grocery.dto.response.ListCartDetailsResponse;
 import com.express.grocery.Express.Grocery.entity.*;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
@@ -93,5 +94,23 @@ public class CartServiceImpl implements CartService {
         //Then show the cart details of that cart
         cartRepository.save(cart);
         return listCartDetailsResponse;
+    }
+
+    @Override
+    public CartCountResponse getCartCount(String userUuid) {
+        //Find user
+        User user = userRepository.findById(userUuid).orElseThrow(()-> new ResourceNotFoundException(String.format("User not found with id: %s", userUuid), 0));
+
+        //Find cart according to the user
+        Cart cart = cartRepository.findByUser(user);
+
+        CartCountResponse cartCountResponse = new CartCountResponse();
+        if (cart.getCartDetails() == null){
+            cartCountResponse.setCartCount(0);
+        } else {
+            cartCountResponse.setCartCount(cart.getCartDetails().size());
+            cartCountResponse.setMessage("success");
+        }
+        return cartCountResponse;
     }
 }

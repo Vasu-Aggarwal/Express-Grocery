@@ -1,4 +1,4 @@
---SELECT * FROM express_store.user;
+-- SELECT * FROM express_store.user;
 
 -- Insert data into user
 
@@ -140,3 +140,11 @@ INSERT INTO product_category VALUES (25, 10);
 INSERT INTO product_category VALUES (26, 10);
 INSERT INTO product_category VALUES (27, 10);
 INSERT INTO product_category VALUES (28, 10);
+
+insert into express_store.cart values (1, FALSE, now(), now(), NULL, NULL, "b12d61ff-2261-11ef-ad97-f02f74a4b4a3");
+insert into express_store.cart values (2, FALSE, now(), now(), NULL, NULL, "b12e348a-2261-11ef-ad97-f02f74a4b4a3");
+insert into express_store.cart values (3, FALSE, now(), now(), NULL, NULL, "b12ee770-2261-11ef-ad97-f02f74a4b4a3");
+insert into express_store.cart values (4, FALSE, now(), now(), NULL, NULL, "b12f8946-2261-11ef-ad97-f02f74a4b4a3");
+insert into express_store.cart values (5, FALSE, now(), now(), NULL, NULL, "b1301d67-2261-11ef-ad97-f02f74a4b4a3");
+insert into express_store.cart values (6, FALSE, now(), now(), NULL, NULL, "b130d29b-2261-11ef-ad97-f02f74a4b4a3");
+insert into express_store.cart values (7, FALSE, now(), now(), NULL, NULL, "b131566b-2261-11ef-ad97-f02f74a4b4a3");
