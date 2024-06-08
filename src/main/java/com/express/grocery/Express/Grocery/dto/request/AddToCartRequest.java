@@ -28,7 +28,4 @@ public class AddToCartRequest {
 
     @NotNull(message = "product id cannot be null")
     private Integer product;
-
-    @NotNull
-    private Integer cart;
 }

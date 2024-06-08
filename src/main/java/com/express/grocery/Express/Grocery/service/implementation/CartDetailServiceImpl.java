@@ -44,11 +44,11 @@ public class CartDetailServiceImpl implements CartDetailService {
     @Override
     public AddToCartResponse addToCart(AddToCartRequest addToCartRequest) {
 
-        if (addToCartRequest.getCart() == null)
-            throw new BadRequestException("No cart found");
+        //find user
+        User user = userRepository.findById(addToCartRequest.getUserUuid()).orElseThrow(() -> new ResourceNotFoundException("User not found", 0));
 
         //find cart
-        Cart cart = cartRepository.findById(addToCartRequest.getCart()).orElseThrow(() -> new ResourceNotFoundException(String.format("Cart not found with id: %s", addToCartRequest.getCart()), 0));
+        Cart cart = cartRepository.findById(user.getCart().getCartId()).orElseThrow(() -> new ResourceNotFoundException(String.format("Cart not found with id: %s", user.getCart().getCartId()), 0));
 
 
         //Find the products
