@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/category")
 public class CategoryController {
@@ -22,6 +24,12 @@ public class CategoryController {
     public ResponseEntity<CategoryDto> addUpdateCategory(@RequestBody @Valid AddUpdateCategoryRequest addUpdateCategoryRequest){
         CategoryDto categoryDto = categoryService.addUpdateCategory(addUpdateCategoryRequest);
         return new ResponseEntity<>(categoryDto, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/getCategoryList")
+    public ResponseEntity<List<CategoryDto>> getAllCategory(){
+        List<CategoryDto> categoryDtos = categoryService.getAllCategories();
+        return new ResponseEntity<>(categoryDtos, HttpStatus.OK);
     }
 
 }
