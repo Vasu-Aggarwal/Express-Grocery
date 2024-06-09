@@ -45,7 +45,7 @@ public class CartDetailController {
     public ResponseEntity<ListCartDetailsResponse> getCartDetails(
             @PathVariable String userUuid,
             @RequestParam(required = false) Integer productId,
-            @RequestParam(required = false, defaultValue = "v2") String v
+            @RequestParam(required = false, defaultValue = "2") String v
     ){
         if ("2".equals(v)){
             // Call the version 2 service method
