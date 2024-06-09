@@ -13,9 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RemoveFromCart {
 
-    @NotNull
-    private Integer cartDetailId;
-
     @NotNull(message = "User uuid cannot be null")
     @NotEmpty
     private String userUuid;

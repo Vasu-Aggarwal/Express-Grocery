@@ -10,6 +10,6 @@ import java.util.List;
 public interface CartService {
 
     ListCartDetailsResponse getCartDetails(String userUuid);
+    ListCartDetailsResponse getCartDetailsV2(String userUuid, Integer productId);
     CartCountResponse getCartCount(String userUuid);
-
 }

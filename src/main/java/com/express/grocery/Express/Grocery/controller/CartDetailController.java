@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("/api/cart")
 public class CartDetailController {
@@ -41,9 +42,19 @@ public class CartDetailController {
     }
 
     @GetMapping("/getCartDetails/{userUuid}")
-    public ResponseEntity<ListCartDetailsResponse> getCartDetails(@PathVariable String userUuid){
-        ListCartDetailsResponse listCartDetailsResponse = cartService.getCartDetails(userUuid);
-        return new ResponseEntity<>(listCartDetailsResponse, HttpStatus.CREATED);
+    public ResponseEntity<ListCartDetailsResponse> getCartDetails(
+            @PathVariable String userUuid,
+            @RequestParam(required = false) Integer productId,
+            @RequestParam(required = false, defaultValue = "v2") String v
+    ){
+        if ("2".equals(v)){
+            // Call the version 2 service method
+            ListCartDetailsResponse listCartDetailsResponse = cartService.getCartDetailsV2(userUuid, productId);
+            return new ResponseEntity<>(listCartDetailsResponse, HttpStatus.OK);
+        } else {
+            ListCartDetailsResponse listCartDetailsResponse = cartService.getCartDetails(userUuid);
+            return new ResponseEntity<>(listCartDetailsResponse, HttpStatus.CREATED);
+        }
     }
 
     @GetMapping("/getCartCount/{userUuid}")
