@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,10 +52,21 @@ public class CartDetailServiceImpl implements CartDetailService {
         Product product = productRepository.findById(addToCartRequest.getProduct())
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Product with product id: %s not found", addToCartRequest.getProduct()), 0));
 
-        CartDetail cartDetail = new CartDetail();
-        cartDetail.setCart(cart);
-        cartDetail.setProduct(product);
-        cartDetail.setProductQuantity(addToCartRequest.getProductQuantity());
+        // Check if the product already exists in the cart
+        Optional<CartDetail> existingCartDetail = cart.getCartDetails().stream()
+                .filter(cartDetail -> product.getProductId().equals(cartDetail.getProduct().getProductId()))
+                .findFirst();
+        CartDetail cartDetail;
+        if (existingCartDetail.isPresent()) {
+            // If the product exists, update the quantity
+            cartDetail = existingCartDetail.get();
+            cartDetail.setProductQuantity(cartDetail.getProductQuantity() + addToCartRequest.getProductQuantity());
+        } else {
+            cartDetail = new CartDetail();
+            cartDetail.setCart(cart);
+            cartDetail.setProduct(product);
+            cartDetail.setProductQuantity(addToCartRequest.getProductQuantity());
+        }
         AddToCartResponse cartResponse = modelMapper.map(cartDetailRepository.save(cartDetail), AddToCartResponse.class);
         ProductServiceImpl.productDiscountHelper(cartResponse.getProduct());
         cartResponse.setProductDiscountedAmount(cartResponse.getProduct().getProductDiscountedPrice()*cartResponse.getProductQuantity());

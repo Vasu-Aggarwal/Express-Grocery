@@ -108,7 +108,9 @@ public class CartServiceImpl implements CartService {
         if (cart.getCartDetails() == null){
             cartCountResponse.setCartCount(0);
         } else {
-            cartCountResponse.setCartCount(cart.getCartDetails().size());
+            //Total products in cart details
+            Integer cartDetailCount = cart.getCartDetails().stream().mapToInt(CartDetail::getProductQuantity).sum();
+            cartCountResponse.setCartCount(cartDetailCount);
             cartCountResponse.setMessage("success");
         }
         return cartCountResponse;
