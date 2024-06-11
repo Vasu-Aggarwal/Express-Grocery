@@ -2,6 +2,7 @@ package com.express.grocery.Express.Grocery.controller;
 
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateProductRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
+import com.express.grocery.Express.Grocery.dto.response.AllProductListResponse;
 import com.express.grocery.Express.Grocery.exception.BadExcelException;
 import com.express.grocery.Express.Grocery.exception.BadRequestException;
 import com.express.grocery.Express.Grocery.service.CategoryService;
@@ -46,8 +47,13 @@ public class ProductController {
     }
 
     @GetMapping("/allProductList")
-    public ResponseEntity<List<AddUpdateProductResponse>> getAllProducts(){
-        List<AddUpdateProductResponse> productResponses = productService.allProductList();
+    public ResponseEntity<AllProductListResponse> getAllProducts(
+            @RequestParam(value = "uuid") String userUuid,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "20", required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "productName", required = false) String sortBy
+    ){
+        AllProductListResponse productResponses = productService.allProductList(userUuid, pageNumber, pageSize, sortBy);
         return new ResponseEntity<>(productResponses, HttpStatus.ACCEPTED);
     }
 

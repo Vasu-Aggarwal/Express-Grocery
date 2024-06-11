@@ -2,6 +2,7 @@ package com.express.grocery.Express.Grocery.service;
 
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateProductRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
+import com.express.grocery.Express.Grocery.dto.response.AllProductListResponse;
 import com.express.grocery.Express.Grocery.entity.Product;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +27,7 @@ public interface ProductService {
     //Apis for normal user
 
     //Get all the products
-    List<AddUpdateProductResponse> allProductList();;
+    AllProductListResponse allProductList(String userUuid, Integer pageNumber, Integer pageSize, String sortBy);
 
     //Get product by Name
     AddUpdateProductResponse getProductByName(String productName);

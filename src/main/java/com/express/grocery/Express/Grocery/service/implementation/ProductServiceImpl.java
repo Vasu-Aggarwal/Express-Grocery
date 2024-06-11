@@ -3,6 +3,8 @@ package com.express.grocery.Express.Grocery.service.implementation;
 import com.express.grocery.Express.Grocery.dto.CategoryDto;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateProductRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
+import com.express.grocery.Express.Grocery.dto.response.AllProductListResponse;
+import com.express.grocery.Express.Grocery.entity.CartDetail;
 import com.express.grocery.Express.Grocery.entity.Category;
 import com.express.grocery.Express.Grocery.entity.Product;
 import com.express.grocery.Express.Grocery.entity.User;
@@ -15,8 +17,13 @@ import com.express.grocery.Express.Grocery.util.ProductExcelHelper;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.*;
@@ -122,11 +129,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<AddUpdateProductResponse> allProductList() {
-        List<Product> products = productRepository.findAll();
+    public AllProductListResponse allProductList(String userUuid, Integer pageNumber, Integer pageSize, String sortBy) {
 
+        User user = userRepository.findById(userUuid).orElseThrow(()-> new ResourceNotFoundException("User not found", 0));
+
+        Map<Integer, Integer> productInCartQuantity = user.getCart().getCartDetails().stream()
+                .collect(Collectors.toMap(
+                        cartDetail -> cartDetail.getProduct().getProductId(),
+                        CartDetail::getProductQuantity
+                ));
+
+        Pageable pageable =  PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+        Page<Product> productsPage = productRepository.findAll(pageable);
+        List<Product> products = productsPage.getContent();
         List<AddUpdateProductResponse> productResponses = products.stream()
-                .map((product)-> modelMapper.map(product, AddUpdateProductResponse.class))
+                .map((product)->{
+                        AddUpdateProductResponse res =  modelMapper.map(product, AddUpdateProductResponse.class);
+                        res.setInCartQuantity(Optional.ofNullable(productInCartQuantity.get(product.getProductId())).orElse(0));
+                        return res;
+                    })
                 .collect(Collectors.toList());
 
         //Get category discount of each product
@@ -134,7 +155,14 @@ public class ProductServiceImpl implements ProductService {
             productDiscountHelper(product);
         }
 
-        return productResponses;
+        AllProductListResponse productListResponse = new AllProductListResponse();
+        productListResponse.setProducts(productResponses);
+        productListResponse.setTotalProducts(productsPage.getTotalElements());
+        productListResponse.setPageNumber(productsPage.getNumber());
+        productListResponse.setPageSize(productsPage.getSize());
+        productListResponse.setIsLastPage(productsPage.isLast());
+        productListResponse.setTotalPages(productsPage.getTotalPages());
+        return productListResponse;
     }
 
     public static void productDiscountHelper(AddUpdateProductResponse product){

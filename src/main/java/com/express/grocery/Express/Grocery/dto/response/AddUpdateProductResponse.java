@@ -28,4 +28,5 @@ public class AddUpdateProductResponse {
     private List<CategoryDto> categories;
     private Integer discountOnCategory;
     private Double productDiscountedPrice;
+    private Integer inCartQuantity;
 }
