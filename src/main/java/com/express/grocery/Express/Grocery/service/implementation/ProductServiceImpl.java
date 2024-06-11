@@ -195,10 +195,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public AddUpdateProductResponse getProductByName(String productName) {
+    public AddUpdateProductResponse getProductByName(String userUuid, String productName) {
+        User user = userRepository.findById(userUuid).orElseThrow(()-> new ResourceNotFoundException("User not found", 0));
+
         Product product = productRepository.findByProductNameContainingIgnoreCase(productName).orElseThrow(()-> new ResourceNotFoundException(String.format("Product not found: %s", productName), 0));
         AddUpdateProductResponse productResponse = modelMapper.map(product, AddUpdateProductResponse.class);
         productDiscountHelper(productResponse);
+        Optional<CartDetail> cartDetails = user.getCart()
+                .getCartDetails()
+                .stream()
+                .filter(cartDetail -> cartDetail.getProduct().getProductId().equals(product.getProductId()))
+                .findFirst();
+        cartDetails.ifPresent(cartDetail -> productResponse.setInCartQuantity(cartDetail.getProductQuantity()));
         return productResponse;
     }
 

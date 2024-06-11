@@ -4,19 +4,20 @@ import com.express.grocery.Express.Grocery.config.CouponType;
 import com.express.grocery.Express.Grocery.dto.CategoryDto;
 import com.express.grocery.Express.Grocery.dto.request.AddUpdateCategoryRequest;
 import com.express.grocery.Express.Grocery.dto.response.AddUpdateProductResponse;
-import com.express.grocery.Express.Grocery.entity.Category;
-import com.express.grocery.Express.Grocery.entity.Coupon;
-import com.express.grocery.Express.Grocery.entity.Product;
+import com.express.grocery.Express.Grocery.entity.*;
 import com.express.grocery.Express.Grocery.exception.ResourceNotFoundException;
 import com.express.grocery.Express.Grocery.repository.CategoryRepository;
 import com.express.grocery.Express.Grocery.repository.CouponRepository;
 import com.express.grocery.Express.Grocery.repository.ProductRepository;
+import com.express.grocery.Express.Grocery.repository.UserRepository;
 import com.express.grocery.Express.Grocery.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +34,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public CategoryDto addUpdateCategory(AddUpdateCategoryRequest addUpdateCategoryRequest) {
@@ -93,9 +97,22 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<AddUpdateProductResponse> getProductsByCategoryName(String categoryName) {
+    public List<AddUpdateProductResponse> getProductsByCategoryName(String userUuid, String categoryName) {
+        User user = userRepository.findById(userUuid).orElseThrow(()-> new ResourceNotFoundException("User not found", 0));
+
+        Map<Integer, Integer> productInCartQuantity = user.getCart().getCartDetails().stream()
+                .collect(Collectors.toMap(
+                        cartDetail -> cartDetail.getProduct().getProductId(),
+                        CartDetail::getProductQuantity
+                ));
+
         Category category = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName);
         List<Product> products = category.getProducts();
-        return products.stream().map((product)-> modelMapper.map(product, AddUpdateProductResponse.class)).collect(Collectors.toList());
+        return products.stream().map(product-> {
+            AddUpdateProductResponse response = modelMapper.map(product, AddUpdateProductResponse.class);
+            response.setInCartQuantity(Optional.ofNullable(productInCartQuantity.get(product.getProductId())).orElse(0));
+            return response;
+        }).toList();
+
     }
 }

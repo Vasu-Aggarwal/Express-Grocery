@@ -59,17 +59,18 @@ public class ProductController {
 
     @GetMapping("/searchProduct")
     public ResponseEntity<?> searchProduct(
+            @RequestParam(value = "uuid") String userUuid,
             @RequestParam(value = "productName", required = false) String productName,
             @RequestParam(value = "categoryName", required = false) String categoryName){
 
         if (productName !=null && categoryName !=null){
-            AddUpdateProductResponse productResponse = productService.getProductByName(productName);
+            AddUpdateProductResponse productResponse = productService.getProductByName(userUuid, productName);
             return new ResponseEntity<>(productResponse, HttpStatus.OK);
         } else if (productName != null){
-            AddUpdateProductResponse productResponse = productService.getProductByName(productName);
+            AddUpdateProductResponse productResponse = productService.getProductByName(userUuid, productName);
             return new ResponseEntity<>(productResponse, HttpStatus.OK);
         } else if (categoryName != null){
-            List<AddUpdateProductResponse> products = categoryService.getProductsByCategoryName(categoryName);
+            List<AddUpdateProductResponse> products = categoryService.getProductsByCategoryName(userUuid, categoryName);
             return new ResponseEntity<>(products, HttpStatus.OK);
         } else {
             throw new BadRequestException("Please pass proper parameters");

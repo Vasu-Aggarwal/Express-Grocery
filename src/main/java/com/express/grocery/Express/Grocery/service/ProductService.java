@@ -30,5 +30,5 @@ public interface ProductService {
     AllProductListResponse allProductList(String userUuid, Integer pageNumber, Integer pageSize, String sortBy);
 
     //Get product by Name
-    AddUpdateProductResponse getProductByName(String productName);
+    AddUpdateProductResponse getProductByName(String userUuid, String productName);
 }
