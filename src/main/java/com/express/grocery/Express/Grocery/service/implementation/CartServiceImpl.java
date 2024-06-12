@@ -117,7 +117,9 @@ public class CartServiceImpl implements CartService {
             System.out.println("Cartdetails: " + cartDetails);
         }
 
+        Integer totalItems = 0;
         for (AddToCartResponse cartResponse: cartDetails){
+            totalItems += cartResponse.getProductQuantity();
             AddUpdateProductResponse productResponse = cartResponse.getProduct();
             ProductServiceImpl.productDiscountHelper(productResponse);
             cartResponse.setProductAmount(cartResponse.getProductQuantity()*productResponse.getProductPrice());
@@ -127,6 +129,7 @@ public class CartServiceImpl implements CartService {
 
         listCartDetailsResponse.setProductDetail(cartDetails);
         listCartDetailsResponse.setTotalProducts(cartDetails.size());
+        listCartDetailsResponse.setTotalInCartItems(totalItems);
 
         //Calculate the total amount
         double totalAmount = cartDetails.stream().mapToDouble(AddToCartResponse::getProductAmount).sum();
